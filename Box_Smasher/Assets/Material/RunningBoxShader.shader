@@ -3,7 +3,8 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _Direction("Moving Direction", Vector) = (1, 0, 0, 0)
+        _Direction("Moving Direction", Vector) = (1, 0, 0, 0) // x 값만 필요하지만 유연성을 위해 vector로 받음
+        _Amount("Decresing y amount", float) = 0.5
     }
     SubShader
     {
@@ -31,12 +32,14 @@
             };
 
             fixed3 _Direction;
+            float _Amount;
 
             v2f vert (appdata v)
             {
                 float pi = 3.141592 * 0.5;
-                float x_dir = cos(v.uv.x * pi) * saturate(_Direction.x) + sin(v.uv.x * pi) * saturate(-1 * _Direction.x);
-                float y = v.vertex.y - 0.5 * sin(v.uv.y * pi) * x_dir;
+                float uvX = v.uv.x * pi;
+                float x_dir = cos(uvX) * saturate(_Direction.x) + sin(uvX) * saturate(-_Direction.x);
+                float y = v.vertex.y - _Amount * sin(v.uv.y * pi) * x_dir;
                 v.vertex.y = y;
 
                 v2f o;
@@ -50,8 +53,6 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-                // just invert the colors
-                col.rgb = fixed4(col.r * sin(_Direction.x), 0, 0, 1);
                 return col;
             }
             ENDCG

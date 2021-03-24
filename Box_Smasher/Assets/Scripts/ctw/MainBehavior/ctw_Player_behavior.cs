@@ -158,14 +158,14 @@ public class ctw_Player_behavior : MonoBehaviour
 			{
 				PlayerRigid2D.velocity = new Vector2(PlayerRigid2D.velocity.x+1*XMoveCount,PlayerRigid2D.velocity.y);
 			}
-
-			/// moving shader를 위한 하드코딩
-			if(PlayerRigid2D.angularVelocity < 0.01f)
+			
+			/// 플레이어의 각속도가 0에 가까울때만 쉐이더가 적용되도록함
+			if(Mathf.Abs(PlayerRigid2D.angularVelocity) <= 0.01f)
 			{
-				this.transform.localRotation = Quaternion.EulerRotation(0, 0, 0);
+				this.transform.localRotation = Quaternion.Euler(0, 0, 0);
 				GetComponent<Renderer>().material.SetVector("_Direction", PlayerRigid2D.velocity * 0.05f);
 			}
-			else if(PlayerRigid2D.angularVelocity > 0.01f)
+			else if(Mathf.Abs(PlayerRigid2D.angularVelocity) > 0.01f)
 			{
 				GetComponent<Renderer>().material.SetVector("_Direction", Vector4.zero);
 			}
