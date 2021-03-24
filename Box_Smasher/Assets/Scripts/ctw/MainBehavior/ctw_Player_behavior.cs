@@ -155,7 +155,20 @@ public class ctw_Player_behavior : MonoBehaviour
 				XMoveCount++;
 			
 			if (Mathf.Abs(PlayerRigid2D.velocity.x) < 15)
+			{
 				PlayerRigid2D.velocity = new Vector2(PlayerRigid2D.velocity.x+1*XMoveCount,PlayerRigid2D.velocity.y);
+			}
+
+			/// moving shader를 위한 하드코딩
+			if(PlayerRigid2D.angularVelocity < 0.01f)
+			{
+				this.transform.localRotation = Quaternion.EulerRotation(0, 0, 0);
+				GetComponent<Renderer>().material.SetVector("_Direction", PlayerRigid2D.velocity * 0.05f);
+			}
+			else if(PlayerRigid2D.angularVelocity > 0.01f)
+			{
+				GetComponent<Renderer>().material.SetVector("_Direction", Vector4.zero);
+			}
 			
 			if (Input.GetKey(KeyCode.S)){
 				DOWN = true;
