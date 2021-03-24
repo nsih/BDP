@@ -2570,7 +2570,7 @@ MonoBehaviour:
   Bouncy: {fileID: 6200000, guid: 8da0d72db1317cc42a53d74af1e14b20, type: 2}
   DOWN: 1
   OnAttack: 0
-  HP: 3
+  HP: 300
   Invincible: 0
   DEAD: 0
 --- !u!50 &1616915848
@@ -2612,7 +2612,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7777cee75d5be74596ebb68cc577ee0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2924,7 +2924,7 @@ Camera:
   m_GameObject: {fileID: 2033467634}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -2940,7 +2940,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 120.6
   orthographic: 1
   orthographic size: 15
   m_Depth: -1
