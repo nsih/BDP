@@ -14,11 +14,12 @@ namespace BS.BehaviorTrees.TaskParents.Composites
             {
                 var child = Children[ChildIndex];
 
-                switch(child.Update()){
+                switch(child.Update())
+                {
                     case TaskStatus.Success:
                         return TaskStatus.Success;
-                    case TaskStatus.Running:
-                        return TaskStatus.Running;
+                    case TaskStatus.Continue:
+                        return TaskStatus.Continue;
                 }
 
                 ChildIndex++;

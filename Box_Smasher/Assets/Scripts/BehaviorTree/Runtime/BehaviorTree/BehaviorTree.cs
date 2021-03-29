@@ -33,7 +33,7 @@ namespace BS.BehaviorTrees.Trees{
         public TaskStatus Tick()
         {
             var status = Root.Update();
-            if(status != TaskStatus.Running) Reset();
+            if(status != TaskStatus.Continue) Reset();
 
             return status;
         }

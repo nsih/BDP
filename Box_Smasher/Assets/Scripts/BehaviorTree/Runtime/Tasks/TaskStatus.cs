@@ -3,6 +3,6 @@
     {
         Success,
         Failure,
-        Running
+        Continue
     }
 }

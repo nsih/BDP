@@ -28,7 +28,7 @@ namespace BS.BehaviorTrees.TaskParents
 
             var status = OnUpdate();
             LastStatus = status;
-            if(status != TaskStatus.Running)
+            if(status != TaskStatus.Continue)
             {
                 Reset();
             }
@@ -43,7 +43,11 @@ namespace BS.BehaviorTrees.TaskParents
 
         private void UpdateTicks()
         {
+            if(ParentTree == null) return;
 
+            if(_lastTickCount != ParentTree.TickCount) Reset();
+
+            _lastTickCount = ParentTree.TickCount;
         }
 
         public virtual void End()
@@ -51,10 +55,7 @@ namespace BS.BehaviorTrees.TaskParents
             throw new System.NotImplementedException();
         }
 
-        public virtual void Reset()
-        {
-
-        }
+        public virtual void Reset() {}
 
         public virtual ITaskParent AddChild(ITask child)
         {

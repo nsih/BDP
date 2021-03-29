@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class ctw_Boss_behavior : MonoBehaviour
 {
 	public float DamageForce;

@@ -42,7 +42,7 @@ namespace BS.BehaviorTrees.Tasks
             LastStatus = status;
 
 
-            if(status != TaskStatus.Running)
+            if(status != TaskStatus.Continue)
             {
                 if(_active) ParentTree?.RemoveTask(this);
                 Exit();

@@ -13,8 +13,8 @@ namespace BS.BehaviorTrees.TaskParents.Composites
             for(var i = ChildIndex; i < Children.Count; i++)
             {
                 var child = Children[ChildIndex];
-
                 var status = child.Update();
+    
                 if(status != TaskStatus.Success) return status;
 
                 ChildIndex++;

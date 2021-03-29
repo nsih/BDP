@@ -70,6 +70,28 @@ namespace BS.BehaviorTrees.Trees
             return ParentTask<Inverter>(name);
         }
 
+        public BehaviorTreeBuilder ReturnSuccess (string name = "return success") 
+        {
+            return ParentTask<ReturnSuccess>(name);
+        }
+        
+        public BehaviorTreeBuilder ReturnFailure (string name = "return failure") 
+        {
+            return ParentTask<ReturnFailure>(name);
+        }
+
+        public BehaviorTreeBuilder RepeatUntilSuccess (string name = "repeat until success") {
+            return ParentTask<RepeatUntilSuccess>(name);
+        }
+
+        public BehaviorTreeBuilder RepeatUntilFailure (string name = "repeat until failure") {
+            return ParentTask<RepeatUntilFailure>(name);
+        }
+
+        public BehaviorTreeBuilder RepeatForever (string name = "repeat forever") {
+            return ParentTask<RepeatForever>(name);
+        }
+
         public BehaviorTreeBuilder Sequence(string name = "sequence")
         {
             return ParentTask<Sequence>(name);
@@ -78,6 +100,11 @@ namespace BS.BehaviorTrees.Trees
         public BehaviorTreeBuilder Selector(string name = "selector")
         {
             return ParentTask<Selector>(name);
+        }
+
+        public BehaviorTreeBuilder Parallel(string name = "parallel")
+        {
+            return ParentTask<Parallel>(name);
         }
 
         public BehaviorTreeBuilder Do(string name, Func<TaskStatus> action)
@@ -90,6 +117,28 @@ namespace BS.BehaviorTrees.Trees
         public BehaviorTreeBuilder Do(Func<TaskStatus> action)
         {
             return Do("action", action);
+        }
+        
+        public BehaviorTreeBuilder WaitTime (string name, float time = 1f) {
+            return AddNode(new WaitTime(new TimeMonitor()) {
+                Name = name,
+                time = time
+            });
+        }
+
+        public BehaviorTreeBuilder WaitTime (float time = 1f) {
+            return WaitTime("Wait Time", time);
+        }
+
+        public BehaviorTreeBuilder Condition (string name, Func<bool> action) {
+            return AddNode(new ConditionGeneric {
+                Name = name,
+                updateLogic = action
+            });
+        }
+        
+        public BehaviorTreeBuilder Condition (Func<bool> action) {
+            return Condition("condition", action);
         }
 
         public BehaviorTreeBuilder AddNode(ITask node)
@@ -105,8 +154,10 @@ namespace BS.BehaviorTrees.Trees
             return this;
         }
 
-        public BehaviorTreeBuilder End()
+        public BehaviorTreeBuilder End () 
         {
+            _pointers.RemoveAt(_pointers.Count - 1);
+            
             return this;
         }
 
