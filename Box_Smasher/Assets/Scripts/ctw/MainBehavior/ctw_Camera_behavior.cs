@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using BS.Enemy.Boss;
 using UnityEngine;
 
 public class ctw_Camera_behavior : MonoBehaviour
 {
 	public float CamShake;
 	
-	ctw_Boss_behavior BossScript;
+	BossBehavior BossScript;
 	
 	Transform SelfTransform;
 	
@@ -14,7 +13,7 @@ public class ctw_Camera_behavior : MonoBehaviour
         
 		CamShake = 0f;
 		
-		BossScript = GameObject.Find("ctw_Boss").GetComponent<ctw_Boss_behavior>();
+		BossScript = GameObject.Find("ctw_Boss").GetComponent<BossBehavior>();
 		
 		SelfTransform = GetComponent<Transform>();
     }
@@ -28,7 +27,7 @@ public class ctw_Camera_behavior : MonoBehaviour
 		if (CamShake > 0.1f){
 			
 			CamShake -= 0.005f;
-			if (BossScript.DEAD != 1) CamShake -= 0.015f;
+			if (!BossScript.DEAD) CamShake -= 0.015f;
 		}
 		else CamShake = 0f;
 	}

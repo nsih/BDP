@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using BS.Enemy.Boss;
 using UnityEngine.UI;
 
 public class ctw_Healthbar_behavior : MonoBehaviour
@@ -8,14 +7,14 @@ public class ctw_Healthbar_behavior : MonoBehaviour
 	
 	Image SelfImage;
 	
-	ctw_Boss_behavior Boss;
+	BossBehavior Boss;
 	ctw_Eraser_behavior Eraser;
 	
     void Start(){
 		
 		SelfImage = GetComponent<Image>();
 		
-		Boss = GameObject.Find("ctw_Boss").GetComponent<ctw_Boss_behavior>();
+		Boss = GameObject.Find("ctw_Boss").GetComponent<BossBehavior>();
 		Eraser = GameObject.Find("ctw_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
     }
 	

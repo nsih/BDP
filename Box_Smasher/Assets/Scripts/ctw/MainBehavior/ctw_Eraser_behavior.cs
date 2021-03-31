@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using BS.Enemy.Boss;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class ctw_Eraser_behavior : MonoBehaviour
 {
@@ -14,7 +12,7 @@ public class ctw_Eraser_behavior : MonoBehaviour
 	Transform PlayerTransform;
 	Transform BossTransform;
 	
-	ctw_Boss_behavior BossScript;
+	BossBehavior BossScript;
 	
     void Start(){
 		
@@ -25,7 +23,7 @@ public class ctw_Eraser_behavior : MonoBehaviour
 		PlayerTransform = GameObject.Find("ctw_Player").GetComponent<Transform>();
 		BossTransform = GameObject.Find("ctw_Boss").GetComponent<Transform>();
 		
-		BossScript = GameObject.Find("ctw_Boss").GetComponent<ctw_Boss_behavior>();
+		BossScript = GameObject.Find("ctw_Boss").GetComponent<BossBehavior>();
     }
 
 	
@@ -51,7 +49,7 @@ public class ctw_Eraser_behavior : MonoBehaviour
 			
 			if (Alpha > 0f){
 				Alpha -= 0.005f;
-				if (BossScript.DEAD != 1) Alpha -= 0.015f;
+				if (!BossScript.DEAD) Alpha -= 0.015f;
 			}
 		
 			if (Alpha <= 0f){

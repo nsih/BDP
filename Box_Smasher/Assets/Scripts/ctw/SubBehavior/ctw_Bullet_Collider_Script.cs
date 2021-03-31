@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using BS.Enemy.Boss;
 using UnityEngine;
 
 public class ctw_Bullet_Collider_Script : MonoBehaviour
@@ -17,7 +16,7 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 	ctw_Eraser_behavior Eraser2;
 	
 	Transform PlayerTransform;
-	ctw_Boss_behavior Boss;
+	BossBehavior Boss;
 	
 	void Start(){
 		
@@ -30,7 +29,7 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 		Eraser2 = GameObject.Find("ctw_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
 		
 		PlayerTransform = GameObject.Find("ctw_Player").GetComponent<Transform>();
-		Boss = GameObject.Find("ctw_Boss").GetComponent<ctw_Boss_behavior>();
+		Boss = GameObject.Find("ctw_Boss").GetComponent<BossBehavior>();
 		
 		BulletSprite.color = new Color(0f, 0f, 0f, 0f);
     }
@@ -67,7 +66,7 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 		if ( (Eraser1.Alpha != 0f)||(Eraser2.Alpha != 0f) ) OnWork = false;
 		else OnWork = true;
 		
-		if (Boss.DEAD == 1){
+		if (Boss.DEAD){
 			OnWork = false;
 		}
 		
