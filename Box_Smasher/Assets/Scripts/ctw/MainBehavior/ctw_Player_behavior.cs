@@ -315,10 +315,6 @@ public class ctw_Player_behavior : MonoBehaviour
 			GenEffect(Get_Angle_byPosition(other.collider.GetComponent<Transform>().position, PlayerTransform.position)+60f, 30f, 3f, 8);
 			GenEffect(Get_Angle_byPosition(other.collider.GetComponent<Transform>().position, PlayerTransform.position)-60f, 30f, 3f, 8);
 
-			// 행동 트리 테스트 중
-			// ctw_Boss_behavior BossScript = other.collider.GetComponent<ctw_Boss_behavior>();			
-			// BossScript.OnDamage(Math_Boss_Damage());
-
 			BossBehavior bossScript = other.collider.GetComponent<BossBehavior>();
 			bossScript.OnDamaged(Math_Boss_Damage());
 		}

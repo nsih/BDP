@@ -4,16 +4,14 @@ using BS.BehaviorTrees.Trees;
 using BS.BehaviorTrees.Tasks;
 using UnityEngine;
 
-namespace BS.Enemy.Boss
-{
-    public class BossBehavior : MonoBehaviour
-    {
+namespace BS.Enemy.Boss{
+    public class BossBehavior : MonoBehaviour{
         public float DamageForce;
         public float MaxHP;
         public float HP;
         public float LastHP;
         public bool Invincible = false;
-        public int DEAD = 0;
+        public bool DEAD = false;
         
         public GameObject BulletPrefab;
         
@@ -38,8 +36,7 @@ namespace BS.Enemy.Boss
         [SerializeField]
         private BehaviorTree _tree;
         
-        void Awake()
-        {
+        void Awake(){
             MaxHP = 10000;
             HP = 10000;
             LastHP = 10000;
@@ -56,18 +53,25 @@ namespace BS.Enemy.Boss
 
             _tree = new BehaviorTreeBuilder(gameObject)
                         .Selector()
+                            .Condition(() => DEAD)
                             .Condition(() => Invincible)
                             .Sequence()
-                                .Do("Pattern Update", () => {
-                                    AttackType = (AttackType + 1) % 5;
-                                    return TaskStatus.Success;
-                                })
                                 .Selector("Attack")
                                     .Sequence("pattern_0")
                                         .Condition(() => AttackType == 0)
                                         .Do("Fire", () => {
                                                 Attack_Pattern_0();
-                                                Debug.Log("pattern_0");
+                                                return TaskStatus.Success; 
+                                            })
+                                        .WaitTime(0.8f)
+                                        .Do("Fire", () => {
+                                                Attack_Pattern_0();
+                                                return TaskStatus.Success; 
+                                            })
+                                        .WaitTime(0.8f)
+                                        .Do("Fire", () => {
+                                                Attack_Pattern_0();
+                                                AttackType = (AttackType + 1) % 5;
                                                 return TaskStatus.Success; 
                                             })
                                         .WaitTime(0.8f)
@@ -76,7 +80,7 @@ namespace BS.Enemy.Boss
                                         .Condition(() => AttackType == 1)
                                         .Do("Fire", () => {
                                                 Attack_Pattern_1();
-                                                Debug.Log("pattern_1");
+                                                AttackType = (AttackType + 1) % 5;
                                                 return TaskStatus.Success; 
                                             })
                                         .WaitTime(1.5f)
@@ -85,7 +89,7 @@ namespace BS.Enemy.Boss
                                         .Condition(() => AttackType == 2)
                                         .Do("Fire", () => {
                                                 Attack_Pattern_2();
-                                                Debug.Log("pattern_2");
+                                                AttackType = (AttackType + 1) % 5;
                                                 return TaskStatus.Success; 
                                             })
                                         .WaitTime(3f)
@@ -94,7 +98,22 @@ namespace BS.Enemy.Boss
                                         .Condition(() => AttackType == 3)
                                         .Do("Fire", () => {
                                                 Attack_Pattern_3();
-                                                Debug.Log("pattern_3");
+                                                return TaskStatus.Success; 
+                                            })
+                                        .WaitTime(0.8f)
+                                        .Do("Fire", () => {
+                                                Attack_Pattern_3();
+                                                return TaskStatus.Success; 
+                                            })
+                                        .WaitTime(0.8f)
+                                        .Do("Fire", () => {
+                                                Attack_Pattern_3();
+                                                return TaskStatus.Success; 
+                                            })
+                                        .WaitTime(0.8f)
+                                        .Do("Fire", () => {
+                                                Attack_Pattern_3();
+                                                AttackType = (AttackType + 1) % 5;
                                                 return TaskStatus.Success; 
                                             })
                                         .WaitTime(0.8f)
@@ -103,7 +122,17 @@ namespace BS.Enemy.Boss
                                         .Condition(() => AttackType == 4)
                                         .Do("Fire", () => {
                                                 Attack_Pattern_4();
-                                                Debug.Log("pattern_4");
+                                                return TaskStatus.Success; 
+                                            })
+                                        .WaitTime(1.6f)
+                                        .Do("Fire", () => {
+                                                Attack_Pattern_4();
+                                                return TaskStatus.Success; 
+                                            })
+                                        .WaitTime(1.6f)
+                                        .Do("Fire", () => {
+                                                Attack_Pattern_4();
+                                                AttackType = (AttackType + 1) % 5;
                                                 return TaskStatus.Success; 
                                             })
                                         .WaitTime(1.6f)
@@ -116,24 +145,19 @@ namespace BS.Enemy.Boss
         // Timers
         
         void Timer_InvincibleCool(){
-            
             Invincible = false;
         }
         
         // Maths
-        float Math_2D_Force(float x, float y)
-        {
+        float Math_2D_Force(float x, float y){
             return Mathf.Sqrt(Mathf.Pow(x,2)+Mathf.Pow(y,2));
         }
         
         
         // Checks
-        public void OnDamaged(float Damage)
-        {    
-            if (Invincible)
-            {
-                if (HP > Damage)
-                {
+        public void OnDamaged(float Damage){    
+            if (!Invincible){
+                if (HP > Damage){
                     LastHP = HP;
                     HP -= Damage;
                     AttackType = 0;
@@ -144,12 +168,10 @@ namespace BS.Enemy.Boss
                     Invoke("Timer_InvincibleCool",3.0f);
                     CameraScript.CamShake = 1f;
                 }
-                else if (HP != 0) 
-                {
-                    
+                else if (HP != 0) {
                     LastHP = HP;
                     HP = 0;
-                    DEAD = 1;
+                    DEAD = true;
                     Eraser.Alpha = 1f;
                     CameraScript.CamShake = 2f;
                 }
@@ -341,7 +363,7 @@ namespace BS.Enemy.Boss
         {
             if (Invincible)
                 AlphaInvincible += 0.1f;
-            else if (DEAD == 1)
+            else if (DEAD)
                 AlphaInvincible = 1.2f;
             else
                 AlphaInvincible = 0f;
