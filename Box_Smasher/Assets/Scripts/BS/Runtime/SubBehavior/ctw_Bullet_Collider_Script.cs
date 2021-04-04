@@ -25,11 +25,11 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 		BulletRigid2D = GetComponent<Rigidbody2D>();
 		BulletSprite = GetComponent<SpriteRenderer>();
 		
-		Eraser1 = GameObject.Find("ctw_Eraser_Player").GetComponent<ctw_Eraser_behavior>();
-		Eraser2 = GameObject.Find("ctw_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
+		Eraser1 = GameObject.Find("BS_Eraser_Player").GetComponent<ctw_Eraser_behavior>();
+		Eraser2 = GameObject.Find("BS_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
 		
-		PlayerTransform = GameObject.Find("ctw_Player").GetComponent<Transform>();
-		Boss = GameObject.Find("ctw_Boss").GetComponent<BossBehavior>();
+		PlayerTransform = GameObject.Find("BS_Player").GetComponent<Transform>();
+		Boss = GameObject.Find("BS_Boss").GetComponent<BossBehavior>();
 		
 		BulletSprite.color = new Color(0f, 0f, 0f, 0f);
     }

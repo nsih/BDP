@@ -12,7 +12,7 @@ public class ctw_Effects_OnCam : MonoBehaviour
 	
     void Start(){
 		
-        CameraTransform = GameObject.Find("ctw_Main Camera").GetComponent<Transform>();
+        CameraTransform = GameObject.Find("BS_Main Camera").GetComponent<Transform>();
 		SelfTransform = GetComponent<Transform>();
     }
 

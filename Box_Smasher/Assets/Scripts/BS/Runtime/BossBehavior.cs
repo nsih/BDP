@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BS.BehaviorTrees.Trees;
 using BS.BehaviorTrees.Tasks;
+using BS.Manager.Cameras;
 using UnityEngine;
 
 namespace BS.Enemy.Boss{
@@ -18,8 +19,6 @@ namespace BS.Enemy.Boss{
         Transform PlayerTransform;
         Rigidbody2D PlayerRigid2D;
         ctw_Player_behavior PlayerScript;
-        
-        ctw_Camera_behavior CameraScript;
         
         Transform BossTransform;
         SpriteRenderer BossSprite;
@@ -41,15 +40,13 @@ namespace BS.Enemy.Boss{
             HP = 10000;
             LastHP = 10000;
             
-            PlayerTransform = GameObject.Find("ctw_Player").GetComponent<Transform>();
-            PlayerRigid2D = GameObject.Find("ctw_Player").GetComponent<Rigidbody2D>();
-            PlayerScript = GameObject.Find("ctw_Player").GetComponent<ctw_Player_behavior>();
-            
-            CameraScript = GameObject.Find("ctw_Main Camera").GetComponent<ctw_Camera_behavior>();
+            PlayerTransform = GameObject.Find("BS_Player").GetComponent<Transform>();
+            PlayerRigid2D = GameObject.Find("BS_Player").GetComponent<Rigidbody2D>();
+            PlayerScript = GameObject.Find("BS_Player").GetComponent<ctw_Player_behavior>();
             
             BossTransform = GetComponent<Transform>();
             BossSprite = GetComponent<SpriteRenderer>();
-            Eraser = GameObject.Find("ctw_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
+            Eraser = GameObject.Find("BS_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
 
             _tree = new BehaviorTreeBuilder(gameObject)
                         .Selector()
@@ -166,14 +163,14 @@ namespace BS.Enemy.Boss{
                     Eraser.Alpha = 1f;
                     Invincible = true;
                     Invoke("Timer_InvincibleCool",3.0f);
-                    CameraScript.CamShake = 1f;
+                    CameraManager.Instance.ShakeCamera(1f, 1f);
                 }
                 else if (HP != 0) {
                     LastHP = HP;
                     HP = 0;
                     DEAD = true;
                     Eraser.Alpha = 1f;
-                    CameraScript.CamShake = 2f;
+                    CameraManager.Instance.ShakeCamera(2f, 2f);
                 }
             }
         }
@@ -384,7 +381,7 @@ namespace BS.Enemy.Boss{
         {
             _tree.Tick();
             
-            // Rendering();
+            Rendering();
         }
     }
 }

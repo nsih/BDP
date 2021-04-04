@@ -33,10 +33,10 @@ public class ctw_Bullet_behavior : MonoBehaviour
 		BulletRigid2D = GetComponent<Rigidbody2D>();
 		BulletSprite = GetComponent<SpriteRenderer>();
 		
-		PlayerScript = GameObject.Find("ctw_Player").GetComponent<ctw_Player_behavior>();
+		PlayerScript = GameObject.Find("BS_Player").GetComponent<ctw_Player_behavior>();
 		
-		Eraser1 = GameObject.Find("ctw_Eraser_Player").GetComponent<ctw_Eraser_behavior>();
-		Eraser2 = GameObject.Find("ctw_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
+		Eraser1 = GameObject.Find("BS_Eraser_Player").GetComponent<ctw_Eraser_behavior>();
+		Eraser2 = GameObject.Find("BS_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
 		
 		BulletTransform.localScale = new Vector2(1f/3f , 0.5f/3f);
     }

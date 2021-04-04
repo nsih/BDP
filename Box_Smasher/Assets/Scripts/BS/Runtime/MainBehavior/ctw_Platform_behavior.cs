@@ -23,12 +23,12 @@ public class ctw_Platform_behavior : MonoBehaviour
 		PlatformCollider.offset = new Vector2(0,-2f);
 		PlatformCollider.size = new Vector2(1,4);
 		
-		PlayerTransform = GameObject.Find("ctw_Player").GetComponent<Transform>();
+		PlayerTransform = GameObject.Find("BS_Player").GetComponent<Transform>();
     }
 	
 	void Control(){
 		
-		ctw_Player_behavior CallScript = GameObject.Find("ctw_Player").GetComponent<ctw_Player_behavior>();
+		ctw_Player_behavior CallScript = GameObject.Find("BS_Player").GetComponent<ctw_Player_behavior>();
 		
 		if ((PlayerTransform.position.y >= PlatformTransform.position.y + 0.49f)&&(DownCool == 0)){
 			PlatformCollider.isTrigger = false;

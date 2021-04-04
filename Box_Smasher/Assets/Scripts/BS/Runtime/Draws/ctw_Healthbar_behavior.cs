@@ -14,8 +14,8 @@ public class ctw_Healthbar_behavior : MonoBehaviour
 		
 		SelfImage = GetComponent<Image>();
 		
-		Boss = GameObject.Find("ctw_Boss").GetComponent<BossBehavior>();
-		Eraser = GameObject.Find("ctw_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
+		Boss = GameObject.Find("BS_Boss").GetComponent<BossBehavior>();
+		Eraser = GameObject.Find("BS_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
     }
 	
     void Update(){
@@ -25,11 +25,11 @@ public class ctw_Healthbar_behavior : MonoBehaviour
 		
 		switch (gameObject.name){
 			
-			case "ctw_HealthBar_Red":
+			case "BS_HealthBar_Red":
 				SelfImage.fillAmount = CurrentHP;
 			break;
 			
-			case "ctw_HealthBar_Yellow":
+			case "BS_HealthBar_Yellow":
 				SelfImage.fillAmount = LastHP;
 				if (Boss.LastHP > Boss.HP) Boss.LastHP -= (Boss.LastHP - Boss.HP)/50 + 2;
 				if (Boss.LastHP <= Boss.HP+25) Boss.LastHP = Boss.HP;

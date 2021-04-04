@@ -20,16 +20,16 @@ public class ctw_Eraser_behavior : MonoBehaviour
 		SelfTransform = GetComponent<Transform>();
 		SelfCollider = GetComponent<CircleCollider2D>() as CircleCollider2D;
 		
-		PlayerTransform = GameObject.Find("ctw_Player").GetComponent<Transform>();
-		BossTransform = GameObject.Find("ctw_Boss").GetComponent<Transform>();
+		PlayerTransform = GameObject.Find("BS_Player").GetComponent<Transform>();
+		BossTransform = GameObject.Find("BS_Boss").GetComponent<Transform>();
 		
-		BossScript = GameObject.Find("ctw_Boss").GetComponent<BossBehavior>();
+		BossScript = GameObject.Find("BS_Boss").GetComponent<BossBehavior>();
     }
 
 	
     void Update(){
 		
-		if (SelfTransform.name == "ctw_Eraser_Player"){
+		if (SelfTransform.name == "BS_Eraser_Player"){
 			
 			if (Alpha > 0f){
 				Alpha -= 0.05f;

@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using BS.Enemy.Boss;
+using BS.Manager.Cameras;
+using UnityEngine;
 
 public class ctw_Player_behavior : MonoBehaviour
 {
@@ -11,8 +12,6 @@ public class ctw_Player_behavior : MonoBehaviour
 	SpriteRenderer PlayerSprite;
 	
 	ctw_Eraser_behavior Eraser;
-	
-	ctw_Camera_behavior CameraScript;
 	
 	public PhysicsMaterial2D Normal;
 	public PhysicsMaterial2D Bouncy;
@@ -37,13 +36,11 @@ public class ctw_Player_behavior : MonoBehaviour
 		PlayerCollider = GetComponent<PolygonCollider2D>() as Collider2D;
 		PlayerSprite = GetComponent<SpriteRenderer>();
 		
-		Eraser = GameObject.Find("ctw_Eraser_Player").GetComponent<ctw_Eraser_behavior>();
+		Eraser = GameObject.Find("BS_Eraser_Player").GetComponent<ctw_Eraser_behavior>();
 		
-		MainCamera = GameObject.Find("ctw_Main Camera").GetComponent<Camera>();
+		MainCamera = GameObject.Find("BS_Main Camera").GetComponent<Camera>();
 		
-		CameraScript = MainCamera.GetComponent<ctw_Camera_behavior>();
-		
-		Effect = GameObject.Find("ctw_Effector").GetComponent<ctw_Effector_behavior>();
+		Effect = GameObject.Find("BS_Effector").GetComponent<ctw_Effector_behavior>();
     }
 	
 	
@@ -113,12 +110,12 @@ public class ctw_Player_behavior : MonoBehaviour
 			Invincible = 1;
 			Eraser.Alpha = 1f;
 			Invoke("TimerInvincibleReset",3.0f);
-			CameraScript.CamShake = 0.5f;
+			CameraManager.Instance.ShakeCamera(0.5f, 0.5f);
 		}
 		else if (HP == 1){
 			HP = 0;
 			DEAD = 1;
-			CameraScript.CamShake = 1f;
+			CameraManager.Instance.ShakeCamera(1f, 1f);
 		}
 	}
 	
@@ -304,13 +301,13 @@ public class ctw_Player_behavior : MonoBehaviour
 	
 	void OnCollisionEnter2D(Collision2D other){
 		
-		if ((OnAttack != 2)&&(other.collider.name == "ctw_Boss")&&(Invincible == 0)){
+		if ((OnAttack != 2)&&(other.collider.name == "BS_Boss")&&(Invincible == 0)){
 			if (DEAD != 1) {
 				GenEffect(Get_Angle_byPosition(PlayerTransform.position, other.collider.GetComponent<Transform>().position), 25f, 2f, 10);
 				OnDamage();
 			}
 		}
-		if ((OnAttack == 2)&&(other.collider.name == "ctw_Boss")){
+		if ((OnAttack == 2)&&(other.collider.name == "BS_Boss")){
 			
 			GenEffect(Get_Angle_byPosition(other.collider.GetComponent<Transform>().position, PlayerTransform.position)+60f, 30f, 3f, 8);
 			GenEffect(Get_Angle_byPosition(other.collider.GetComponent<Transform>().position, PlayerTransform.position)-60f, 30f, 3f, 8);
