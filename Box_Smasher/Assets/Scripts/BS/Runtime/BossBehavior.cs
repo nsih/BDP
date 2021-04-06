@@ -6,11 +6,9 @@ using BS.Manager.Cameras;
 using UnityEngine;
 
 namespace BS.Enemy.Boss{
+    [RequireComponent(typeof(BaseBoss))]
     public class BossBehavior : MonoBehaviour{
-        public float DamageForce;
-        public float MaxHP;
-        public float HP;
-        public float LastHP;
+        protected BaseBoss _boss;
         public bool Invincible = false;
         public bool DEAD = false;
         
@@ -36,9 +34,8 @@ namespace BS.Enemy.Boss{
         private BehaviorTree _tree;
         
         void Awake(){
-            MaxHP = 10000;
-            HP = 10000;
-            LastHP = 10000;
+            _boss = GetComponent<BaseBoss>();
+            _boss.SetMaxHealth(10000);
             
             PlayerTransform = GameObject.Find("BS_Player").GetComponent<Transform>();
             PlayerRigid2D = GameObject.Find("BS_Player").GetComponent<Rigidbody2D>();
@@ -152,11 +149,10 @@ namespace BS.Enemy.Boss{
         
         
         // Checks
-        public void OnDamaged(float Damage){    
+        public void OnDamaged(float damage){    
             if (!Invincible){
-                if (HP > Damage){
-                    LastHP = HP;
-                    HP -= Damage;
+                if (_boss.Health > damage){
+                    _boss.SetHealth(_boss.Health - damage);
                     AttackType = 0;
                     ATTACK = false;
                     AlphaInvincible = 0f;
@@ -165,9 +161,8 @@ namespace BS.Enemy.Boss{
                     Invoke("Timer_InvincibleCool",3.0f);
                     CameraManager.Instance.ShakeCamera(1f, 1f);
                 }
-                else if (HP != 0) {
-                    LastHP = HP;
-                    HP = 0;
+                else if (_boss.Health != 0) {
+                    _boss.SetHealth(0);
                     DEAD = true;
                     Eraser.Alpha = 1f;
                     CameraManager.Instance.ShakeCamera(2f, 2f);
