@@ -1,4 +1,5 @@
-﻿using BS.Enemy.Boss;
+﻿using BS.Projectile;
+using BS.Enemy.Boss;
 using UnityEngine;
 
 /// 콜리더만 있는 Bullet을 한 개 생성해 플레이어와 가장 가까이에 있고 (Onwork == true)인 총알을 따라다니며 피격처리를 함
@@ -14,8 +15,8 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 	
 	public bool OnWork = true;
 	
-	ctw_Eraser_behavior Eraser1;
-	ctw_Eraser_behavior Eraser2;
+	BulletEraser Eraser1;
+	BulletEraser Eraser2;
 	
 	Transform PlayerTransform;
 	BossBehavior Boss;
@@ -27,8 +28,8 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 		BulletRigid2D = GetComponent<Rigidbody2D>();
 		BulletSprite = GetComponent<SpriteRenderer>();
 		
-		Eraser1 = GameObject.Find("BS_Eraser_Player").GetComponent<ctw_Eraser_behavior>();
-		Eraser2 = GameObject.Find("BS_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
+		Eraser1 = GameObject.Find("BS_Eraser_Player").GetComponent<BulletEraser>();
+		Eraser2 = GameObject.Find("BS_Eraser_Boss").GetComponent<BulletEraser>();
 		
 		PlayerTransform = GameObject.Find("BS_Player").GetComponent<Transform>();
 		Boss = GameObject.Find("BS_Boss").GetComponent<BossBehavior>();
@@ -37,7 +38,7 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
     }
 	
 	public void Hitted(){
-		TargetBullet.GetComponent<ctw_Bullet_behavior>().OnWork = false;
+		TargetBullet.GetComponent<Bullet>().OnWork = false;
 	}
 	
 	float Math_2D_Range(Vector3 Pos1, Vector3 Pos2){
@@ -51,7 +52,7 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 			Vector3 Player = PlayerTransform.position;
 			float Last = 500;
 			for(int i = 0;i<Boss.BulletPool; i++){
-				if (Boss.Bullet[i].GetComponent<ctw_Bullet_behavior>().OnWork == true){
+				if (Boss.Bullet[i].GetComponent<Bullet>().OnWork == true){
 					Vector3 Bullets = Boss.Bullet[i].GetComponent<Transform>().position;
 					if (Last > Math_2D_Range(Bullets,Player)){
 					Last = Math_2D_Range(Bullets,Player);
@@ -65,7 +66,7 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 	
 	void Rendering(){
 		
-		if ( (Eraser1.Alpha != 0f)||(Eraser2.Alpha != 0f) ) OnWork = false;
+		if ( (Eraser1._sprite.enabled != false)||(Eraser2._sprite.enabled != false) ) OnWork = false;
 		else OnWork = true;
 		
 		if (Boss.DEAD){

@@ -28,7 +28,7 @@ public class ctw_Platform_behavior : MonoBehaviour
 	
 	void Control(){
 		
-		ctw_Player_behavior CallScript = GameObject.Find("BS_Player").GetComponent<ctw_Player_behavior>();
+		PlayerController CallScript = GameObject.Find("BS_Player").GetComponent<PlayerController>();
 		
 		if ((PlayerTransform.position.y >= PlatformTransform.position.y + 0.49f)&&(DownCool == 0)){
 			PlatformCollider.isTrigger = false;
