@@ -4,19 +4,19 @@ using BS.Enemy.Boss;
 using BS.Manager.Cameras;
 using UnityEngine;
 
-public class ctw_Player_behavior : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
 	Transform PlayerTransform;
 	Rigidbody2D PlayerRigid2D;
 	Collider2D PlayerCollider;
-	SpriteRenderer PlayerSprite;
+	public SpriteRenderer _playerBodySprite;
 	
-	ctw_Eraser_behavior Eraser;
+	public BulletEraser _eraser;
 	
 	public PhysicsMaterial2D Normal;
 	public PhysicsMaterial2D Bouncy;
 	
-	Camera MainCamera;
+	Camera _mainCamera;
 	
 	public bool DOWN = false;
 	public int OnAttack = 0;
@@ -29,21 +29,20 @@ public class ctw_Player_behavior : MonoBehaviour
 	
 	ctw_Effector_behavior Effect;
 	
-    void Start(){
+    void Awake(){
 		
         PlayerTransform = GetComponent<Transform>();
 		PlayerRigid2D = GetComponent<Rigidbody2D>();
 		PlayerCollider = GetComponent<PolygonCollider2D>() as Collider2D;
-		PlayerSprite = GetComponent<SpriteRenderer>();
 		
-		Eraser = GameObject.Find("BS_Eraser_Player").GetComponent<ctw_Eraser_behavior>();
+		if(_eraser == null){
+			Debug.LogError("eraser가 할당되어 있지 않습니다.");
+		}
 		
-		MainCamera = GameObject.Find("BS_Main Camera").GetComponent<Camera>();
+		_mainCamera = CameraManager.Instance.MainCamera;
 		
 		Effect = GameObject.Find("BS_Effector").GetComponent<ctw_Effector_behavior>();
     }
-	
-	
 	
 	// Maths
 	
@@ -78,7 +77,7 @@ public class ctw_Player_behavior : MonoBehaviour
 	Vector2 GetForceDirection(){
 		
 		Vector3 PlayerPos = PlayerTransform.position;
-		Vector3 MouseStaticPos = new Vector3(MainCamera.ScreenToWorldPoint(Input.mousePosition).x,MainCamera.ScreenToWorldPoint(Input.mousePosition).y,0);
+		Vector3 MouseStaticPos = new Vector3(_mainCamera.ScreenToWorldPoint(Input.mousePosition).x,_mainCamera.ScreenToWorldPoint(Input.mousePosition).y,0);
 		Vector3 MousePrivatePos = MouseStaticPos - PlayerPos;
 		
 		float RangeKey = Math_2D_Force(MousePrivatePos.x,MousePrivatePos.y);
@@ -108,14 +107,14 @@ public class ctw_Player_behavior : MonoBehaviour
 			HP -= 1;
 			AlphaInvincible = 0f;
 			Invincible = 1;
-			Eraser.Alpha = 1f;
+			_eraser.EraserWave(0.05f);
 			Invoke("TimerInvincibleReset",3.0f);
-			CameraManager.Instance.ShakeCamera(0.5f, 0.5f);
+			CameraManager.Instance.ShakeCamera(0.5f, 0.05f);
 		}
 		else if (HP == 1){
 			HP = 0;
 			DEAD = 1;
-			CameraManager.Instance.ShakeCamera(1f, 1f);
+			CameraManager.Instance.ShakeCamera(1f, 0.1f);
 		}
 	}
 	
@@ -157,17 +156,6 @@ public class ctw_Player_behavior : MonoBehaviour
 				PlayerRigid2D.velocity = new Vector2(PlayerRigid2D.velocity.x+1*XMoveCount,PlayerRigid2D.velocity.y);
 			}
 			
-			/// 플레이어의 각속도가 0에 가까울때만 쉐이더가 적용되도록함
-			if(Mathf.Abs(PlayerRigid2D.angularVelocity) <= 0.01f)
-			{
-				this.transform.localRotation = Quaternion.Euler(0, 0, 0);
-				GetComponent<Renderer>().material.SetVector("_Direction", PlayerRigid2D.velocity * 0.05f);
-			}
-			else if(Mathf.Abs(PlayerRigid2D.angularVelocity) > 0.01f)
-			{
-				GetComponent<Renderer>().material.SetVector("_Direction", Vector4.zero);
-			}
-			
 			if (Input.GetKey(KeyCode.S)){
 				DOWN = true;
 			}
@@ -187,10 +175,10 @@ public class ctw_Player_behavior : MonoBehaviour
 	void InputAttack(){
 		
 		if ((Input.GetMouseButton(0))&&(OnAir == 1)&&(OnAttack != 2)){
-			if ((PlayerRigid2D.angularVelocity <= 2000)&&(MainCamera.ScreenToWorldPoint(Input.mousePosition).x - PlayerTransform.position.x <= 0)){
+			if ((PlayerRigid2D.angularVelocity <= 2000)&&(_mainCamera.ScreenToWorldPoint(Input.mousePosition).x - PlayerTransform.position.x <= 0)){
 				PlayerRigid2D.angularVelocity = PlayerRigid2D.angularVelocity + 30;
 			}
-			if ((PlayerRigid2D.angularVelocity >= -2000)&&(MainCamera.ScreenToWorldPoint(Input.mousePosition).x - PlayerTransform.position.x > 0)){
+			if ((PlayerRigid2D.angularVelocity >= -2000)&&(_mainCamera.ScreenToWorldPoint(Input.mousePosition).x - PlayerTransform.position.x > 0)){
 				PlayerRigid2D.angularVelocity = PlayerRigid2D.angularVelocity - 30;
 			}
 			if (Mathf.Abs(PlayerRigid2D.angularVelocity) > 2000){
@@ -239,11 +227,11 @@ public class ctw_Player_behavior : MonoBehaviour
 	
 	void Rendering(){
 		
-		float R = PlayerSprite.color.r;
-		float G = PlayerSprite.color.g;
-		float B = PlayerSprite.color.b;
+		float R = _playerBodySprite.color.r;
+		float G = _playerBodySprite.color.g;
+		float B = _playerBodySprite.color.b;
 		
-		PlayerSprite.color = new Color(R, G, B, Mathf.Abs((Mathf.Cos(AlphaInvincible))) );
+		_playerBodySprite.color = new Color(R, G, B, Mathf.Abs((Mathf.Cos(AlphaInvincible))) );
 	}
 	
 	void OnTriggerStay2D(Collider2D other){

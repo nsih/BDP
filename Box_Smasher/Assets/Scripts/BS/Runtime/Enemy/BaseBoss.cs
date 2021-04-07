@@ -8,6 +8,7 @@ namespace BS.Enemy.Boss
     {
         HealthBar _healthBar;
 
+        public bool isEnabled { get; set; } = false;
         protected float _maxHealth;
         protected float _health;
 
@@ -23,7 +24,9 @@ namespace BS.Enemy.Boss
             }
         }
 
-        private void Awake(){
+        /// BaseBoss 초기화
+        public void Init(){
+            isEnabled = true;
             _healthBar = GetComponent<HealthBar>();
         }
 

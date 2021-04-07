@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using BS.Projectile;
 using BS.BehaviorTrees.Trees;
 using BS.BehaviorTrees.Tasks;
 using BS.Manager.Cameras;
@@ -16,11 +15,11 @@ namespace BS.Enemy.Boss{
         
         Transform PlayerTransform;
         Rigidbody2D PlayerRigid2D;
-        ctw_Player_behavior PlayerScript;
+        PlayerController PlayerScript;
         
         Transform BossTransform;
         SpriteRenderer BossSprite;
-        ctw_Eraser_behavior Eraser;
+        public BulletEraser _eraser;
         
         public GameObject[] Bullet = new GameObject[250];
         public int BulletPool = 0;
@@ -35,15 +34,21 @@ namespace BS.Enemy.Boss{
         
         void Awake(){
             _boss = GetComponent<BaseBoss>();
-            _boss.SetMaxHealth(10000);
+            if(!_boss.isEnabled){
+                _boss.Init();
+                _boss.SetMaxHealth(10000);
+            }
             
             PlayerTransform = GameObject.Find("BS_Player").GetComponent<Transform>();
             PlayerRigid2D = GameObject.Find("BS_Player").GetComponent<Rigidbody2D>();
-            PlayerScript = GameObject.Find("BS_Player").GetComponent<ctw_Player_behavior>();
+            PlayerScript = GameObject.Find("BS_Player").GetComponent<PlayerController>();
             
             BossTransform = GetComponent<Transform>();
             BossSprite = GetComponent<SpriteRenderer>();
-            Eraser = GameObject.Find("BS_Eraser_Boss").GetComponent<ctw_Eraser_behavior>();
+
+            if(_eraser == null){
+                Debug.LogWarning("eraser가 할당되지 않았습니다.");
+            }
 
             _tree = new BehaviorTreeBuilder(gameObject)
                         .Selector()
@@ -156,16 +161,16 @@ namespace BS.Enemy.Boss{
                     AttackType = 0;
                     ATTACK = false;
                     AlphaInvincible = 0f;
-                    Eraser.Alpha = 1f;
+                    _eraser.EraserWave(1.2f, 0.75f);
                     Invincible = true;
                     Invoke("Timer_InvincibleCool",3.0f);
-                    CameraManager.Instance.ShakeCamera(1f, 1f);
+                    CameraManager.Instance.ShakeCamera(1f, 0.1f);
                 }
                 else if (_boss.Health != 0) {
                     _boss.SetHealth(0);
                     DEAD = true;
-                    Eraser.Alpha = 1f;
-                    CameraManager.Instance.ShakeCamera(2f, 2f);
+                    _eraser.EraserWave(3f, 0.25f);
+                    CameraManager.Instance.ShakeCamera(2f, 0.2f);
                 }
             }
         }
@@ -248,7 +253,7 @@ namespace BS.Enemy.Boss{
             
             if (BulletPool != 0){
                 for(;i<BulletPool; i++){
-                    if (Bullet[i].GetComponent<ctw_Bullet_behavior>().OnWork == false){
+                    if (Bullet[i].GetComponent<Bullet>().OnWork == false){
                         Key = 1;
                         break;
                     }
@@ -270,7 +275,7 @@ namespace BS.Enemy.Boss{
             Vector3 BossPos = BossTransform.position;
             
             Transform BulletTransform = Bullet.GetComponent<Transform>();
-            ctw_Bullet_behavior BulletScript = Bullet.GetComponent<ctw_Bullet_behavior>();
+            Bullet BulletScript = Bullet.GetComponent<Bullet>();
             
             BulletTransform.position = BossPos;
             BulletTransform.rotation = rotation;
@@ -288,7 +293,7 @@ namespace BS.Enemy.Boss{
             GameObject Bullet = Attack_CheckandReturn();
             
             Transform BulletTransform = Bullet.GetComponent<Transform>();
-            ctw_Bullet_behavior BulletScript = Bullet.GetComponent<ctw_Bullet_behavior>();
+            Bullet BulletScript = Bullet.GetComponent<Bullet>();
             
             BulletTransform.position = TPlocation;
             BulletTransform.rotation = rotation;
