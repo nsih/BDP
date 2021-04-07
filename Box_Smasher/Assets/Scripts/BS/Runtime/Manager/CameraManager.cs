@@ -24,6 +24,7 @@ namespace BS.Manager.Cameras{
 		protected IEnumerator Shake(float t, float amp, float freq){
 			float duration = t;
 			int index = 0;
+			Vector3 origin = camera.transform.localPosition;
 
 			while(duration > 0){
 				duration -= freq;
@@ -31,6 +32,7 @@ namespace BS.Manager.Cameras{
 				yield return new WaitForSeconds(freq);
 			}
 
+			camera.transform.localPosition = origin;
 			yield return null;
 		}
 	}
