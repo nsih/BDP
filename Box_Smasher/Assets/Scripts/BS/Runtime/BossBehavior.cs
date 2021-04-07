@@ -9,10 +9,10 @@ namespace BS.Enemy.Boss{
     [RequireComponent(typeof(BaseBoss))]
     public class BossBehavior : MonoBehaviour{
         protected BaseBoss _boss;
-        public bool Invincible = false;
-        public bool DEAD = false;
+        public bool Invincible = false;			// 무적상태를 체크하는 bool
+        public bool DEAD = false;				// 죽었는지 체크하는 bool
         
-        public GameObject BulletPrefab;
+        public GameObject BulletPrefab;			// 미리 만들어진 총알을 참조용으로 불러오는 변수
         
         Transform PlayerTransform;
         Rigidbody2D PlayerRigid2D;
@@ -172,6 +172,7 @@ namespace BS.Enemy.Boss{
          
         // Gets
         
+		// 보스의 위치에서 대상의 위치로 향하는 각도를 반환
         float Get_angle_byPosition(Vector3 Pos){
             
             Vector3 BossPos = BossTransform.position;
@@ -179,6 +180,7 @@ namespace BS.Enemy.Boss{
             return ( Mathf.Atan2(Pos.y-BossPos.y, Pos.x-BossPos.x) * Mathf.Rad2Deg );
         }
         
+		// 총알에 부여할 힘의 방향을 좌표 형식으로 반환
         Vector2 Get_Force_Direction(){
             
             Vector3 PlayerPos = PlayerTransform.position;
@@ -188,12 +190,13 @@ namespace BS.Enemy.Boss{
             return ForceDirection;
         }
         
+		// 입력받은 각도를 좌표벡터로 변환해 반환
         Vector3 Get_Target_AngleToPos(float angle){
             
             return new Vector3(Mathf.Cos(angle*Mathf.Deg2Rad), Mathf.Sin(angle*Mathf.Deg2Rad), 0); 
         }
         
-        
+        // 입력받은 상대적 좌표를 일반화된 좌표로 변환하여 반환
         Vector3 Get_Vector3_Direction(Vector3 Pos){
             
             float RangeKey = Math_2D_Force(Pos.x,Pos.y);
@@ -205,11 +208,14 @@ namespace BS.Enemy.Boss{
             return VectorDirection;
         }
         
+		// 입력받은 두 좌표간의 거리를 반환
         float Get_Vector3_Range(Vector3 Pos1, Vector3 Pos2){
             
             return Mathf.Sqrt(Mathf.Pow((Pos1.x - Pos2.x),2)+Mathf.Pow((Pos1.y - Pos2.y),2));
         }
         
+		// 입력받은 좌표를 기준으로 플레이어를 바라보기 위한 총알의 각도를 반환
+		// [REWORK] 픽셀 퍼펙트를 맞추기 힘들다면 각도의 일반화가 필요할 수 있음
         Quaternion Get_toPlayer_rotation(Vector3 Pos){
             
             Vector3 PlayerPos = PlayerTransform.position;
@@ -225,6 +231,7 @@ namespace BS.Enemy.Boss{
         
         // Attacks
         
+		// 총알을 Instance화 하여 반환
         GameObject Attack_Gen_Bullet(){
             
 
@@ -233,6 +240,7 @@ namespace BS.Enemy.Boss{
             return Instantiate(BulletPrefab, BossTransform);
         }
         
+		// 공격에 필요한 sleep 상태에 있는 총알(Onwork == false)이 존재하면 그것을 반환, 존재하지 않으면 새로운 총알 Instance 반환
         GameObject Attack_CheckandReturn(){
             
             int Key = 0;
@@ -254,6 +262,8 @@ namespace BS.Enemy.Boss{
             return Bullet[i];
         }
         
+		// 총알의 위치를 보스의 위치로 초기화하고 공격에 사용하는 데에 쓰이는 함수
+		// 인자는 순서대로 발사속도, 목표좌표, 총알의 발사각도, 총알이 발사되기까지 기다리는 틱, 총알의 회전력
         void Attack_SetBullet(float Force,Vector3 Target,Quaternion rotation, float Timer_t, float roll){
             
             GameObject Bullet = Attack_CheckandReturn();
@@ -268,9 +278,11 @@ namespace BS.Enemy.Boss{
             BulletScript.OnWork = true;
             BulletScript.Timer = Timer_t;
             BulletScript.Roll = roll;
-            BulletScript.Alpha = 0f;
+            BulletScript.Alpha = 0f;			// 총알의 투명도(Alpha)는 발사 후 1으로 초기화됨
         }
         
+		// 총알의 위치를 특정 위치로 초기화하고 공격에 사용하는 데에 쓰이는 함수
+		// 인자는 순서대로 발사속도, 목표좌표, 총알의 발사각도, 총알이 발사되기까지 기다리는 틱, 총알의 회전력, 발사가 시작될 위치
         void Attack_TeleportBullet(float Force,Vector3 Target,Quaternion rotation, float Timer_t, float roll, Vector3 TPlocation){
             
             GameObject Bullet = Attack_CheckandReturn();

@@ -1,6 +1,8 @@
 ﻿using BS.Enemy.Boss;
 using UnityEngine;
 
+/// 콜리더만 있는 Bullet을 한 개 생성해 플레이어와 가장 가까이에 있고 (Onwork == true)인 총알을 따라다니며 피격처리를 함
+
 public class ctw_Bullet_Collider_Script : MonoBehaviour
 {
 	Transform BulletTransform;

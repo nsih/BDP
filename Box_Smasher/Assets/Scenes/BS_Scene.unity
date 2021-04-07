@@ -2090,10 +2090,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9c067c411c2d64ba22289bab8d3317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageForce: 0
-  MaxHP: 0
-  HP: 0
-  LastHP: 0
   Invincible: 0
   DEAD: 0
   BulletPrefab: {fileID: 8462338759821967857, guid: e30467d83c223ed48aa27dcc7b1f24d2,
