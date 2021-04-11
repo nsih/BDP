@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
 	public int Invincible = 0;
 	public int DEAD = 0;
 	
-	int OnAir = 0;
+	public int OnAir = 0; //public 으로 바꿈 sih.
 	float AlphaInvincible = 0;
 	
 	ctw_Effector_behavior Effect;
