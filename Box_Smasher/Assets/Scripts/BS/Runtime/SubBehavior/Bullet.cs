@@ -1,4 +1,4 @@
-﻿using BS.Projectile;
+﻿using BS.Player;
 using UnityEngine;
 
 namespace BS.Projectile{

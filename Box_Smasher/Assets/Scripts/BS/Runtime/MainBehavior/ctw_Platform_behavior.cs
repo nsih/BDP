@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using BS.Player;
 using UnityEngine;
 
 // All Codes worked well on 2020-07-06

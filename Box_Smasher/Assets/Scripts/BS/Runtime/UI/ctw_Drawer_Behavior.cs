@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using BS.Player;
 using UnityEngine;
 
 public class ctw_Drawer_Behavior : MonoBehaviour
