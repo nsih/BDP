@@ -2,6 +2,7 @@
 using BS.BehaviorTrees.Trees;
 using BS.BehaviorTrees.Tasks;
 using BS.Manager.Cameras;
+using BS.Player;
 using UnityEngine;
 
 namespace BS.Enemy.Boss{
