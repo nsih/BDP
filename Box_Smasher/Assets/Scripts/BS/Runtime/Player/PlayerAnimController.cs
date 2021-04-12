@@ -2,17 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAnimController : MonoBehaviour
+namespace BS.Player
 {
-    // Start is called before the first frame update
-    void Start()
+    public class PlayerAnimController : MonoBehaviour
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
