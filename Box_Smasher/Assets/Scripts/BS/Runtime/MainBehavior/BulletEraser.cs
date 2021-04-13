@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BulletEraser : MonoBehaviour
 {
+	public GameObject _followingObj;
 	public SpriteRenderer _sprite;
 	CircleCollider2D _collider;
 
@@ -38,5 +39,12 @@ public class BulletEraser : MonoBehaviour
 		_collider.radius = _originRadius;
 		_sprite.enabled = false;
 		yield return null;
+	}
+
+	private void Update()
+	{
+		if(_followingObj != null){
+			this.transform.position = _followingObj.transform.position;
+		}
 	}
 }

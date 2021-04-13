@@ -19,15 +19,6 @@ namespace BS.Player
 
         bool isBlink = false;
 
-        enum BodyState{
-            Idle,
-            Error
-        }
-
-        enum FaceState{
-            Idle
-        }
-
         /// <summary>
         /// 플레이어 Animation Controller 초기화
         /// </summary>
@@ -87,17 +78,56 @@ namespace BS.Player
                                             alpha);
         }
 
-        public void Render(){
+        /// <summary>
+        /// 4 frame 애니메이션으로
+        /// 0.75 부터 마지막 프레임이기 때문에
+        /// player의 power가 애니메이션의 진행도가 됨
+        /// </summary>
+        protected void ChargingAnim(){
+            float progress = (Mathf.Abs(_player._currentPower) / _player._maxPower) * 0.75f;
+
+            if(progress > 0.75f){
+                progress = 1f;
+            }
+
+            _faceAnimator.SetFloat("Charging", progress);
+        }
+
+        /// <summary>
+        /// Player 공격 성공시 애니메이션 재생
+        /// </summary>
+        public void AttackSuccess(){
+            _faceAnimator.SetTrigger("AttackSuccess");
+        }
+
+        /// <summary>
+        /// Player가 공격을 받아 무적 상태에 진입
+        /// </summary>
+        public void OnHit(){
             if(_player.Invincible && !isBlink){
                 SpriteAlphaBlink(0.9f, 0.03f);
-                _bodyAnimator.SetTrigger("OnHit");
-                _faceAnimator.SetTrigger("OnHit");
-            }
 
-            if(_player.DEAD == 1){
+                _bodyAnimator.SetTrigger("OnHit");
+                if(!_player.IsCharging){
+                    _faceAnimator.SetTrigger("OnHit");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Player 사망시 애니메이션 재생
+        /// </summary>
+        public void Dead(){
+            if(_player.Dead){
                 SetSpriteAlpha(0.35f);
             }
+        }
 
+        public void Render(){            
+            ChargingAnim();
+            
+            // Player가 Charging 중이 아니면 Falling Animation
+            _faceAnimator.SetBool("Falling", _player.IsFalling && !_player.IsCharging && !_player.AttackSuccess);
         }
     }
 }
