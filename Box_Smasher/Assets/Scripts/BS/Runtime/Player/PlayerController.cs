@@ -294,7 +294,9 @@ namespace BS.Player{
 				_animController.AttackSuccess();
 			}
 			
-			TimerAttackReset();
+			if (other.collider.tag != "Wall"){
+				TimerAttackReset();
+			}
 		}
 		
 		void Update(){
