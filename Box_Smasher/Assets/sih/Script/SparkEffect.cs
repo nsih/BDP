@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using BS.Player;
 using UnityEngine;
 
 public class SparkEffect : MonoBehaviour
@@ -40,7 +41,7 @@ public class SparkEffect : MonoBehaviour
     {
         for (int i = 0; i < 50; i++)
         {
-            if (i%2 ==0)
+            if ( i % 2 ==0 )
             {
                 GameObject temp = Instantiate(Spark0) as GameObject;
                 temp.gameObject.SetActive(false);
