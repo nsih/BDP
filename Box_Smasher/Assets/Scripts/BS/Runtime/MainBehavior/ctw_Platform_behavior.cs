@@ -21,7 +21,7 @@ public class ctw_Platform_behavior : MonoBehaviour
 		
         PlatformTransform = GetComponent<Transform>();
 		PlatformCollider = gameObject.AddComponent<BoxCollider2D>() as BoxCollider2D;
-		PlatformCollider.offset = new Vector2(0,-2f);
+		PlatformCollider.offset = new Vector2(0,-2);
 		PlatformCollider.size = new Vector2(1,4);
 		
 		PlayerTransform = GameObject.Find("BS_Player").GetComponent<Transform>();
@@ -31,16 +31,17 @@ public class ctw_Platform_behavior : MonoBehaviour
 		
 		PlayerController CallScript = GameObject.Find("BS_Player").GetComponent<PlayerController>();
 		
-		if ((PlayerTransform.position.y >= PlatformTransform.position.y + 0.49f)&&(DownCool == 0)){
+		if ((PlayerTransform.position.y >= PlatformTransform.position.y + 0.2)&&(DownCool == 0)){
 			PlatformCollider.isTrigger = false;
 			
-			if ((CallScript.DOWN == true)&&(PlayerTransform.position.y - PlatformTransform.position.y <= 2f)){
+			if ((CallScript.DOWN == true)&&(PlayerTransform.position.y - PlatformTransform.position.y <= 3)){
 				PlatformCollider.isTrigger = true;
 				DownCool = 1;
 				Invoke("Cooler",0.5f);
 			}
 		}
-		if ((PlayerTransform.position.y < PlatformTransform.position.y -1f)&&(DownCool == 0)){
+		
+		if ((PlayerTransform.position.y < PlatformTransform.position.y - 1)&&(DownCool == 0)){
 			PlatformCollider.isTrigger = true;
 		}
 	}
