@@ -23,6 +23,7 @@ namespace BS.Player{
 		
 		Camera _mainCamera;
 		
+		public float _moveDirection;
 		public bool DOWN = false;
 		public int OnHit = 0;
 		public int HP = 3;
@@ -39,7 +40,7 @@ namespace BS.Player{
 			_animController = this.transform.gameObject.AddComponent<PlayerAnimController>();
 			_animController.Init(this, _bodyAnimator, _faceAnimator);
 			_rigidBody = GetComponent<Rigidbody2D>();
-			_collider = GetComponent<PolygonCollider2D>() as Collider2D;
+			_collider = GetComponent<CapsuleCollider2D>() as Collider2D;
 			
 			if(_eraser == null){
 				Debug.LogError("eraser가 할당되어 있지 않습니다.");
@@ -123,18 +124,18 @@ namespace BS.Player{
 		// Inputs
 		
 		void InputMove(){
-			float XMoveCount = 0;
+			_moveDirection = 0;
 			
 			if (OnHit == 0){
 				
 				if (Input.GetKey(KeyCode.A))
-					XMoveCount--;
+					_moveDirection--;
 				if (Input.GetKey(KeyCode.D))
-					XMoveCount++;
+					_moveDirection++;
 				
 				if (Mathf.Abs(_rigidBody.velocity.x) < 15)
 				{
-					_rigidBody.velocity = new Vector2(_rigidBody.velocity.x+1*XMoveCount,_rigidBody.velocity.y);
+					_rigidBody.velocity = new Vector2(_rigidBody.velocity.x+1*_moveDirection,_rigidBody.velocity.y);
 				}
 				
 				if (Input.GetKey(KeyCode.S)){
@@ -153,29 +154,41 @@ namespace BS.Player{
 			}
 		}
 		
-		void InputAttack(){
-			
-			if ((Input.GetMouseButton(0))&&(OnAir == 1)&&(OnHit != 2)){
-				IsCharging = true;
-				float amount = _maxPower * 0.015f;
+		float AngleBetweenTwoPoints(Vector3 a, Vector3 b){
+			return Mathf.Atan2(a.y - b.y, a.x - b.x) * Mathf.Rad2Deg;
+		}
 
-				if ((_currentPower <= _maxPower)&&(_mainCamera.ScreenToWorldPoint(Input.mousePosition).x - this.transform.position.x <= 0)){
-					_currentPower += amount;
-				}
-				if ((_currentPower >= -_maxPower)&&(_mainCamera.ScreenToWorldPoint(Input.mousePosition).x - this.transform.position.x > 0)){
-					_currentPower -= amount;
-				}
-				if (Mathf.Abs(_currentPower) > _maxPower){
-					_currentPower = _currentPower > 0 ? 1 : -1 * _maxPower;
-				}
+		void InputAttack(){
+
+			if(Input.GetMouseButtonDown(0) && (OnAir == 1) && (OnHit != 2)){
+				_currentPower = 0;
+				IsCharging = true;
 				OnHit = 1;
 			}
-			else if ((Input.GetMouseButtonUp(0))&&(OnHit == 1)){
-				_rigidBody.velocity = GetForceDirection()*Mathf.Abs(_currentPower)/40;
-				OnHit = 2;
+			
+			if ((Input.GetMouseButton(0)) && (OnAir == 1) && (OnHit != 2)){
+				Vector2 pos = this.transform.position;
+				Vector2 mouseOnWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
+
+				float angle = AngleBetweenTwoPoints(pos, mouseOnWorld);
+
+				transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle));
+
+				float amount = _maxPower * 0.015f;
+				float direction = (mouseOnWorld - pos).x <= 0 ? 1 : -1;
+
+				_currentPower += amount * direction;
+			}
+
+			if ((Input.GetMouseButtonUp(0))&&(OnHit == 1)){
+				if (Mathf.Abs(_currentPower) >= _maxPower){
+					_currentPower = (_currentPower > 0 ? 1 : -1) * _maxPower;
+				}
+
+				_rigidBody.velocity = GetForceDirection() * Mathf.Abs(_currentPower) / 40;
 				_collider.sharedMaterial = Bouncy;
 
-				_currentPower = 0;
+				OnHit = 2;
 				IsCharging = false;
 			}
 			
@@ -224,6 +237,7 @@ namespace BS.Player{
 						OnAir = 0;
 						IsFalling = false;
 						AttackSuccess = false;
+						IsCharging = false;
 					}
 					break;
 				case "Bullet":
@@ -245,6 +259,7 @@ namespace BS.Player{
 					OnAir = 0;
 					IsFalling = false;
 					AttackSuccess = false;
+					IsCharging = false;
 					break;
 			}
 		}

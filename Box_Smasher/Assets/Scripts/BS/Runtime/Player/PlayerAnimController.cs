@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using BS.Manager.Cameras;
 using UnityEngine;
 
 namespace BS.Player
@@ -18,6 +19,7 @@ namespace BS.Player
         protected SpriteRenderer _faceSprite;
 
         bool isBlink = false;
+        int prevLeftRightDirection = 1;
 
         /// <summary>
         /// 플레이어 Animation Controller 초기화
@@ -84,13 +86,18 @@ namespace BS.Player
         /// player의 power가 애니메이션의 진행도가 됨
         /// </summary>
         protected void ChargingAnim(){
-            float progress = (Mathf.Abs(_player._currentPower) / _player._maxPower) * 0.75f;
 
-            if(progress > 0.75f){
-                progress = 1f;
+            if(_player.IsCharging){
+                float progress = (Mathf.Abs(_player._currentPower) / _player._maxPower) * 0.75f;
+
+                if(progress > 0.75f){
+                    progress = 1f;
+                }
+        
+                _faceAnimator.SetFloat("Charging", progress);
+            }else{
+                _faceAnimator.SetFloat("Charging", 0);
             }
-
-            _faceAnimator.SetFloat("Charging", progress);
         }
 
         /// <summary>
@@ -122,12 +129,71 @@ namespace BS.Player
                 SetSpriteAlpha(0.35f);
             }
         }
+        
+        /// <summary>
+        /// 이동 방향에 따라 Player sprite를 좌우로 뒤집습니다.
+        /// Player의 z rotation이 180이라면 상하로 뒤집습니다.
+        /// </summary>
+        protected void FlipSprite(){
+            float rotationZ = Mathf.Abs(_player.transform.rotation.eulerAngles.z);
+
+
+            int directionUpDown = 1;
+            // Player가 Charging 중...
+            if(_player.IsCharging){
+                if((90 < rotationZ) && (rotationZ < 270)){
+                    directionUpDown = -1;
+                }
+            }
+            else if((170 < rotationZ) && (rotationZ < 190)){
+                directionUpDown = -1;
+            }
+
+
+            int directionLeftRight = prevLeftRightDirection;
+            // Player가 Charging 중...
+            if(_player.IsCharging){
+                Vector2 pos = this.transform.position;
+				Vector2 mouseOnWorld = CameraManager.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
+
+                directionLeftRight = (mouseOnWorld - pos).x <= 0 ? -1 : 1;
+                prevLeftRightDirection = directionLeftRight;
+            }
+            else if(Mathf.Abs(_player._moveDirection) > 0){
+                directionLeftRight = (int)(_player._moveDirection / Mathf.Abs(_player._moveDirection));
+                prevLeftRightDirection = directionLeftRight;
+            }
+
+            Vector3 scale = new Vector3(1 * directionLeftRight * directionUpDown, 1 * directionUpDown, 1);
+
+            _faceSprite.transform.localScale = scale;
+            _bodySprite.transform.localScale = scale;
+        }
 
         public void Render(){            
             ChargingAnim();
             
             // Player가 Charging 중이 아니면 Falling Animation
             _faceAnimator.SetBool("Falling", _player.IsFalling && !_player.IsCharging && !_player.AttackSuccess);
+            
+            FlipSprite();
+        }
+
+        /// <summary>
+        /// 디버깅 용
+        /// 아직 제대로 만들지 않음
+        /// </summary>
+        private void OnDrawGizmos()
+        {
+            float distance = 1f;
+            // Left
+            Gizmos.color = Color.yellow;
+            Vector3 dst = (_bodySprite.transform.position - new Vector3(distance * _bodySprite.transform.localScale.x, 0, 0));
+            Gizmos.DrawLine(_bodySprite.transform.position, dst);
+            // Up
+            Gizmos.color = Color.blue;
+            dst = (_bodySprite.transform.position - new Vector3(0, distance * _bodySprite.transform.localEulerAngles.y, 0));
+            Gizmos.DrawLine(_bodySprite.transform.position, dst);
         }
     }
 }
