@@ -33,7 +33,6 @@ namespace BS.Manager.Cameras{
 
 		protected IEnumerator Shake(float t, float amp, float freq){
 			float duration = t;
-			int index = 0;
 			Vector3 origin = _camera.transform.localPosition;
 
 			while(duration > 0){
