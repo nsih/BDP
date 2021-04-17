@@ -32,10 +32,12 @@ namespace BS.Player{
 		public bool IsFalling = false;
 		public bool Dead = false;
 		public bool AttackSuccess = false;
-		
+
 		public int OnAir = 0;
 		ctw_Effector_behavior Effect;
-		
+
+		public int ismoving;
+
 		void Awake(){
 			_animController = this.transform.gameObject.AddComponent<PlayerAnimController>();
 			_animController.Init(this, _bodyAnimator, _faceAnimator);
@@ -128,10 +130,17 @@ namespace BS.Player{
 			
 			if (OnHit == 0){
 				
-				if (Input.GetKey(KeyCode.A))
+				if (Input.GetKey(KeyCode.A)){
 					_moveDirection--;
-				if (Input.GetKey(KeyCode.D))
+					ismoving = 1;
+				}
+				else if (Input.GetKey(KeyCode.D)){
 					_moveDirection++;
+					ismoving = 1;
+				}
+                else
+					ismoving = 0;
+					
 				
 				if (Mathf.Abs(_rigidBody.velocity.x) < 15)
 				{
@@ -151,6 +160,9 @@ namespace BS.Player{
 					GenEffect(180f, 30f, 1f, 4);
 					OnAir = 1;
 				}
+
+
+				//Debug.Log(ismoving);
 			}
 		}
 		
