@@ -9,7 +9,7 @@ namespace BS.Player{
 	public class PlayerController : MonoBehaviour
 	{
 		protected PlayerAnimController _animController;
-		protected PlayerPhysicManager _physicManager;
+		protected PlayerPhysicController _physicManager;
 		protected ctw_Effector_behavior _effector;
 
 		protected Rigidbody2D _rigid;
@@ -46,7 +46,7 @@ namespace BS.Player{
 			_animController.Init(this, _bodyAnimator, _faceAnimator);
 
 			// Init Physic Manager
-			_physicManager = GetComponent<PlayerPhysicManager>() ?? this.transform.gameObject.AddComponent<PlayerPhysicManager>();
+			_physicManager = GetComponent<PlayerPhysicController>() ?? this.transform.gameObject.AddComponent<PlayerPhysicController>();
 			_physicManager.Init(this, _rigid);
 
 			_effector = FindObjectOfType<ctw_Effector_behavior>();

@@ -8,7 +8,7 @@ using UnityEngine;
 /// 플레이어의 물리 관련 처리를 위한 컴포넌트
 /// </summary>
 namespace BS.Player{
-    public class PlayerPhysicManager : MonoBehaviour
+    public class PlayerPhysicController : MonoBehaviour
     {
         [SerializeField]
         private LayerMask _groundLayers;
