@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using NaughtyAttributes;
 using BS.Enemy.Boss;
 using BS.Manager.Cameras;
 using UnityEngine;
@@ -7,15 +8,18 @@ using UnityEngine;
 namespace BS.Player{
 	public class PlayerController : MonoBehaviour
 	{
+		protected PlayerAnimController _animController;
+		protected PlayerPhysicManager _physicManager;
+		protected ctw_Effector_behavior _effector;
+
+		protected Rigidbody2D _rigid;
+		protected Collider2D _collider;
+		public float _maxPower = 2000; /// 최대 차지 파워
+		[ProgressBar("Attack Power", 2000, EColor.Green)]
+		public float _currentPower = 0; /// 현재 차지 파워
+		
 		public Animator _bodyAnimator;
 		public Animator _faceAnimator;
-		protected PlayerAnimController _animController;
-
-		public Rigidbody2D _rigidBody;
-		public float _maxPower = 2000; /// 최대 차지 파워
-		public float _currentPower = 0; /// 현재 차지 파워
-		Collider2D _collider;
-		
 		public BulletEraser _eraser;
 		
 		public PhysicsMaterial2D Normal;
@@ -26,30 +30,35 @@ namespace BS.Player{
 		public float _moveDirection;
 		public bool DOWN = false;
 		public int OnHit = 0;
+		[ProgressBar("Health", 3, EColor.Red)]
 		public int HP = 3;
 		public bool Invincible = false;
 		public bool IsCharging = false;
-		public bool IsFalling = false;
 		public bool Dead = false;
 		public bool AttackSuccess = false;
 
-		public int OnAir = 0;
-		ctw_Effector_behavior Effect;
-
-		public int ismoving;
-
 		void Awake(){
-			_animController = this.transform.gameObject.AddComponent<PlayerAnimController>();
-			_animController.Init(this, _bodyAnimator, _faceAnimator);
-			_rigidBody = GetComponent<Rigidbody2D>();
+			_rigid = GetComponent<Rigidbody2D>();
 			_collider = GetComponent<CapsuleCollider2D>() as Collider2D;
+
+			// Init animation controller
+			_animController = GetComponent<PlayerAnimController>() ?? this.transform.gameObject.AddComponent<PlayerAnimController>();
+			_animController.Init(this, _bodyAnimator, _faceAnimator);
+
+			// Init Physic Manager
+			_physicManager = GetComponent<PlayerPhysicManager>() ?? this.transform.gameObject.AddComponent<PlayerPhysicManager>();
+			_physicManager.Init(this, _rigid);
+
+			_effector = FindObjectOfType<ctw_Effector_behavior>();
 			
 			if(_eraser == null){
 				Debug.LogError("eraser가 할당되어 있지 않습니다.");
 			}
-			
+			if(_effector == null){
+				Debug.LogError("effector가 할당되어 있지 않습니다.");
+			}
+
 			_mainCamera = CameraManager.Instance.MainCamera;
-			Effect = GameObject.Find("BS_Effector").GetComponent<ctw_Effector_behavior>();
 		}
 		
 		// Maths
@@ -59,7 +68,7 @@ namespace BS.Player{
 		}
 		
 		float Math_Boss_Damage(){
-			return (500f + Mathf.Abs((_currentPower * Math_2D_Force(_rigidBody.velocity.x, _rigidBody.velocity.y) / 50f)) );
+			return (500f + Mathf.Abs((_currentPower * Math_2D_Force(_rigid.velocity.x, _rigid.velocity.y) / 50f)) );
 		}
 		
 		
@@ -96,7 +105,20 @@ namespace BS.Player{
 		Vector2 Get_Force_byAngle(float angle){
 			return new Vector2( Mathf.Cos(angle*Mathf.Deg2Rad), Mathf.Sin(angle*Mathf.Deg2Rad) ); 
 		}
+
+
+		public bool OnAir(){
+			return _physicManager._onAir;
+		}
+
+		public bool IsMoving(){
+			return _physicManager._isMoving;
+		}
 		
+		public bool IsFalling(){
+			return _physicManager._isFalling;
+		}
+
 		// Checks
 		void OnDamage(){
 			if (HP > 1){
@@ -118,10 +140,8 @@ namespace BS.Player{
 		// Effects
 		void GenEffect(float angle, float F, float time, int num){
 			Vector3 pos = this.transform.position;
-			Effect.Effect_Run(time, pos, Get_Force_byAngle(angle)*F, num);
+			_effector?.Effect_Run(time, pos, Get_Force_byAngle(angle)*F, num);
 		}
-		
-		
 		
 		// Inputs
 		
@@ -132,19 +152,19 @@ namespace BS.Player{
 				
 				if (Input.GetKey(KeyCode.A)){
 					_moveDirection--;
-					ismoving = 1;
+					_physicManager._isMoving = true;
 				}
 				else if (Input.GetKey(KeyCode.D)){
 					_moveDirection++;
-					ismoving = 1;
+					_physicManager._isMoving = true;
 				}
                 else
-					ismoving = 0;
+					_physicManager._isMoving = false;
 					
 				
-				if (Mathf.Abs(_rigidBody.velocity.x) < 15)
+				if (Mathf.Abs(_rigid.velocity.x) < 15)
 				{
-					_rigidBody.velocity = new Vector2(_rigidBody.velocity.x+1*_moveDirection,_rigidBody.velocity.y);
+					_rigid.velocity = new Vector2(_rigid.velocity.x+1*_moveDirection,_rigid.velocity.y);
 				}
 				
 				if (Input.GetKey(KeyCode.S)){
@@ -154,11 +174,11 @@ namespace BS.Player{
 					DOWN = false;
 				}
 				
-				if ((Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.Space))&&(OnAir == 0)){
-					_rigidBody.velocity = new Vector2(_rigidBody.velocity.x,40);
+				if ((Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.Space))&& !_physicManager._onAir ){
+					_rigid.velocity = new Vector2(_rigid.velocity.x,40);
 					GenEffect(0f, 30f, 1f, 4);
 					GenEffect(180f, 30f, 1f, 4);
-					OnAir = 1;
+					_physicManager._onAir = true;
 				}
 
 
@@ -172,13 +192,13 @@ namespace BS.Player{
 
 		void InputAttack(){
 
-			if(Input.GetMouseButtonDown(0) && (OnAir == 1) && (OnHit != 2)){
+			if(Input.GetMouseButtonDown(0) && _physicManager._onAir && (OnHit != 2)){
 				_currentPower = 0;
 				IsCharging = true;
 				OnHit = 1;
 			}
 			
-			if ((Input.GetMouseButton(0)) && (OnAir == 1) && (OnHit != 2)){
+			if ((Input.GetMouseButton(0)) && _physicManager._onAir && (OnHit != 2)){
 				Vector2 pos = this.transform.position;
 				Vector2 mouseOnWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
@@ -197,7 +217,7 @@ namespace BS.Player{
 					_currentPower = (_currentPower > 0 ? 1 : -1) * _maxPower;
 				}
 
-				_rigidBody.velocity = GetForceDirection() * Mathf.Abs(_currentPower) / 40;
+				_rigid.velocity = GetForceDirection() * Mathf.Abs(_currentPower) / 40;
 				_collider.sharedMaterial = Bouncy;
 
 				OnHit = 2;
@@ -205,15 +225,15 @@ namespace BS.Player{
 			}
 			
 			if (OnHit == 1){
-				_rigidBody.angularDrag = 0.1f;
-				_rigidBody.drag = 2.5f;
-				_rigidBody.gravityScale = 0.5f;
+				_rigid.angularDrag = 0.1f;
+				_rigid.drag = 2.5f;
+				_rigid.gravityScale = 0.5f;
 			}
 			
 			else{
-				_rigidBody.angularDrag = 0.2f;
-				_rigidBody.drag = 0.2f;
-				_rigidBody.gravityScale = 9.8f;
+				_rigid.angularDrag = 0.2f;
+				_rigid.drag = 0.2f;
+				_rigid.gravityScale = 9.8f;
 			}
 			
 			if (OnHit != 2)
@@ -226,32 +246,42 @@ namespace BS.Player{
 		
 		void Caring(){
 			
-			if ((OnAir == 1)&&(OnHit != 1)){
-				_rigidBody.gravityScale = 9.8f;
+			if (_physicManager._onAir && (OnHit != 1)){
+				_rigid.gravityScale = 9.8f;
 			}
 			
-			if (OnAir == 0){
-				_rigidBody.gravityScale = 4.9f;
+			if ( !_physicManager._onAir ){
+				_rigid.gravityScale = 4.9f;
 			}
 		}
 		
-		void OnTriggerStay2D(Collider2D other){
-			
+		public void ProcessEffect(Collider2D other){
 			switch (other.tag){
 				case "Platform":
 					ctw_Platform_behavior PlatformScript = other.GetComponent<ctw_Platform_behavior>();
 					
-					if ((PlatformScript.Trigger == false)&&(_rigidBody.velocity.y <= 0)){
-						if (OnAir == 1){
+					if ((PlatformScript.Trigger == false)&&(_rigid.velocity.y <= 0)){
+						if ( _physicManager._onAir ){
 							GenEffect(0f, 15f, 1f, 3);
 							GenEffect(180f, 15f, 1f, 3);
 						}
-						OnAir = 0;
-						IsFalling = false;
 						AttackSuccess = false;
 						IsCharging = false;
 					}
 					break;
+				case "Ground":
+					if ( _physicManager._onAir && (_rigid.velocity.y <= -1f)){
+						GenEffect(0f, 15f, 1f, 3);
+						GenEffect(180f, 15f, 1f, 3);
+					}
+					AttackSuccess = false;
+					IsCharging = false;
+					break;
+			}
+		}
+
+		void OnTriggerStay2D(Collider2D other){
+			switch (other.tag){
 				case "Bullet":
 					if (!Invincible){
 						ctw_Bullet_Collider_Script BulletScript = other.GetComponent<ctw_Bullet_Collider_Script>();
@@ -262,29 +292,6 @@ namespace BS.Player{
 						}
 						BulletScript.Hitted();
 					}
-					break;
-				case "Ground":
-					if ((OnAir == 1)&&(_rigidBody.velocity.y <= -1f)){
-						GenEffect(0f, 15f, 1f, 3);
-						GenEffect(180f, 15f, 1f, 3);
-					}
-					OnAir = 0;
-					IsFalling = false;
-					AttackSuccess = false;
-					IsCharging = false;
-					break;
-			}
-		}
-		
-		void OnTriggerExit2D(Collider2D other){
-			switch (other.tag){
-				case "Platform":
-					OnAir = 1;
-					IsFalling = true;
-					break;
-				case "Ground":
-					OnAir = 1;
-					IsFalling = true;
 					break;
 			}
 		}
@@ -311,16 +318,16 @@ namespace BS.Player{
 			}
 		}
 		
-		void Update(){
+		private void Update(){
 			if (!Dead){
 				InputAttack();
 				InputMove();
 			}
 			else {
 				OnHit = 0;
-				_rigidBody.angularDrag = 0.2f;
-				_rigidBody.drag = 0.2f;
-				_rigidBody.gravityScale = 9.8f;
+				_rigid.angularDrag = 0.2f;
+				_rigid.drag = 0.2f;
+				_rigid.gravityScale = 9.8f;
 				_collider.sharedMaterial = Normal;
 			}
 			

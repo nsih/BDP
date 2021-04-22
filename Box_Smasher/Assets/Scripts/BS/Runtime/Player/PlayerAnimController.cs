@@ -174,7 +174,7 @@ namespace BS.Player
             ChargingAnim();
             
             // Player가 Charging 중이 아니면 Falling Animation
-            _faceAnimator.SetBool("Falling", _player.IsFalling && !_player.IsCharging && !_player.AttackSuccess);
+            _faceAnimator.SetBool("Falling", _player.IsFalling() && !_player.IsCharging && !_player.AttackSuccess);
             
             FlipSprite();
         }
@@ -185,15 +185,17 @@ namespace BS.Player
         /// </summary>
         private void OnDrawGizmos()
         {
-            float distance = 1f;
-            // Left
-            Gizmos.color = Color.yellow;
-            Vector3 dst = (_bodySprite.transform.position - new Vector3(distance * _bodySprite.transform.localScale.x, 0, 0));
-            Gizmos.DrawLine(_bodySprite.transform.position, dst);
-            // Up
-            Gizmos.color = Color.blue;
-            dst = (_bodySprite.transform.position - new Vector3(0, distance * _bodySprite.transform.localEulerAngles.y, 0));
-            Gizmos.DrawLine(_bodySprite.transform.position, dst);
+            if(_bodySprite != null){
+                float distance = 1f;
+                // Left
+                Gizmos.color = Color.yellow;
+                Vector3 dst = (_bodySprite.transform.position - new Vector3(distance * _bodySprite.transform.localScale.x, 0, 0));
+                Gizmos.DrawLine(_bodySprite.transform.position, dst);
+                // Up
+                Gizmos.color = Color.blue;
+                dst = (_bodySprite.transform.position - new Vector3(0, distance * _bodySprite.transform.localEulerAngles.y, 0));
+                Gizmos.DrawLine(_bodySprite.transform.position, dst);
+            }
         }
     }
 }

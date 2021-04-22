@@ -35,7 +35,7 @@ public class SoundManger : MonoBehaviour
             {
                 for (int j = 0; j < effects.Length; j++)
                 {
-                    if (effectPL[j].isPlaying = false )
+                    if (!effectPL[j].isPlaying )
                     {
                         sourceName[j] = effects[i].name;
 
