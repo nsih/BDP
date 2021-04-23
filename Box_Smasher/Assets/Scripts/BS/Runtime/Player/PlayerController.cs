@@ -22,20 +22,20 @@ namespace BS.Player{
 		public Animator _faceAnimator;
 		public BulletEraser _eraser;
 		
-		public PhysicsMaterial2D Normal;
-		public PhysicsMaterial2D Bouncy;
+		public PhysicsMaterial2D _normal;
+		public PhysicsMaterial2D _bouncy;
 		
 		Camera _mainCamera;
 		
 		public float _moveDirection;
-		public bool DOWN = false;
-		public int OnHit = 0;
+		public bool _down = false;
+		public int _onHit = 0;
 		[ProgressBar("Health", 3, EColor.Red)]
-		public int HP = 3;
-		public bool Invincible = false;
+		public int _health = 3;
+		public bool isInvincible = false;
 		public bool IsCharging = false;
-		public bool Dead = false;
-		public bool AttackSuccess = false;
+		public bool isDead = false;
+		public bool attackSuccess = false;
 
 		void Awake(){
 			_rigid = GetComponent<Rigidbody2D>();
@@ -71,15 +71,13 @@ namespace BS.Player{
 			return (500f + Mathf.Abs((_currentPower * Math_2D_Force(_rigid.velocity.x, _rigid.velocity.y) / 50f)) );
 		}
 		
-		
-		
 		// Timers
 		void TimerAttackReset(){
-			OnHit = 0;
+			_onHit = 0;
 		}
 		
 		void TimerInvincibleReset(){
-			Invincible = false;
+			isInvincible = false;
 		}
 		
 		// Gets
@@ -106,7 +104,7 @@ namespace BS.Player{
 			return new Vector2( Mathf.Cos(angle*Mathf.Deg2Rad), Mathf.Sin(angle*Mathf.Deg2Rad) ); 
 		}
 
-
+		#region Get 함수들
 		public bool OnAir(){
 			return _physicManager._onAir;
 		}
@@ -118,20 +116,21 @@ namespace BS.Player{
 		public bool IsFalling(){
 			return _physicManager._isFalling;
 		}
+		#endregion
 
 		// Checks
 		void OnDamage(){
-			if (HP > 1){
-				HP -= 1;
-				Invincible = true;
+			if (_health > 1){
+				_health -= 1;
+				isInvincible = true;
 				_eraser.EraserWave(0.05f);
 				_animController.OnHit();
 				Invoke("TimerInvincibleReset",1.0f);
 				CameraManager.Instance.ShakeCamera(0.5f, 0.05f);
 			}
-			else if (HP == 1){
-				HP = 0;
-				Dead = true;
+			else if (_health == 1){
+				_health = 0;
+				isDead = true;
 				_animController.Dead();
 				CameraManager.Instance.ShakeCamera(1f, 0.1f);
 			}
@@ -148,7 +147,7 @@ namespace BS.Player{
 		void InputMove(){
 			_moveDirection = 0;
 			
-			if (OnHit == 0){
+			if (_onHit == 0){
 				
 				if (Input.GetKey(KeyCode.A)){
 					_moveDirection--;
@@ -168,10 +167,10 @@ namespace BS.Player{
 				}
 				
 				if (Input.GetKey(KeyCode.S)){
-					DOWN = true;
+					_down = true;
 				}
 				else{
-					DOWN = false;
+					_down = false;
 				}
 				
 				if ((Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.Space))&& !_physicManager._onAir ){
@@ -192,13 +191,13 @@ namespace BS.Player{
 
 		void InputAttack(){
 
-			if(Input.GetMouseButtonDown(0) && _physicManager._onAir && (OnHit != 2)){
+			if(Input.GetMouseButtonDown(0) && _physicManager._onAir && (_onHit != 2)){
 				_currentPower = 0;
 				IsCharging = true;
-				OnHit = 1;
+				_onHit = 1;
 			}
 			
-			if ((Input.GetMouseButton(0)) && _physicManager._onAir && (OnHit != 2)){
+			if ((Input.GetMouseButton(0)) && _physicManager._onAir && (_onHit != 2)){
 				Vector2 pos = this.transform.position;
 				Vector2 mouseOnWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
@@ -212,19 +211,19 @@ namespace BS.Player{
 				_currentPower += amount * direction;
 			}
 
-			if ((Input.GetMouseButtonUp(0))&&(OnHit == 1)){
+			if ((Input.GetMouseButtonUp(0))&&(_onHit == 1)){
 				if (Mathf.Abs(_currentPower) >= _maxPower){
 					_currentPower = (_currentPower > 0 ? 1 : -1) * _maxPower;
 				}
 
 				_rigid.velocity = GetForceDirection() * Mathf.Abs(_currentPower) / 40;
-				_collider.sharedMaterial = Bouncy;
+				_collider.sharedMaterial = _bouncy;
 
-				OnHit = 2;
+				_onHit = 2;
 				IsCharging = false;
 			}
 			
-			if (OnHit == 1){
+			if (_onHit == 1){
 				_rigid.angularDrag = 0.1f;
 				_rigid.drag = 2.5f;
 				_rigid.gravityScale = 0.5f;
@@ -236,8 +235,8 @@ namespace BS.Player{
 				_rigid.gravityScale = 9.8f;
 			}
 			
-			if (OnHit != 2)
-				_collider.sharedMaterial = Normal;
+			if (_onHit != 2)
+				_collider.sharedMaterial = _normal;
 		}
 		
 		
@@ -246,7 +245,7 @@ namespace BS.Player{
 		
 		void Caring(){
 			
-			if (_physicManager._onAir && (OnHit != 1)){
+			if (_physicManager._onAir && (_onHit != 1)){
 				_rigid.gravityScale = 9.8f;
 			}
 			
@@ -265,7 +264,7 @@ namespace BS.Player{
 							GenEffect(0f, 15f, 1f, 3);
 							GenEffect(180f, 15f, 1f, 3);
 						}
-						AttackSuccess = false;
+						attackSuccess = false;
 						IsCharging = false;
 					}
 					break;
@@ -274,7 +273,7 @@ namespace BS.Player{
 						GenEffect(0f, 15f, 1f, 3);
 						GenEffect(180f, 15f, 1f, 3);
 					}
-					AttackSuccess = false;
+					attackSuccess = false;
 					IsCharging = false;
 					break;
 			}
@@ -283,9 +282,9 @@ namespace BS.Player{
 		void OnTriggerStay2D(Collider2D other){
 			switch (other.tag){
 				case "Bullet":
-					if (!Invincible){
+					if (!isInvincible){
 						ctw_Bullet_Collider_Script BulletScript = other.GetComponent<ctw_Bullet_Collider_Script>();
-						if ((!Dead)&&(BulletScript.OnWork == true)) {
+						if ((!isDead)&&(BulletScript.OnWork == true)) {
 							GenEffect(Get_Angle_byPosition(this.transform.position, other.GetComponent<Transform>().position)+35f, 15f, 1f, 3);
 							GenEffect(Get_Angle_byPosition(this.transform.position, other.GetComponent<Transform>().position)-35f, 15f, 1f, 3);
 							OnDamage();
@@ -297,19 +296,19 @@ namespace BS.Player{
 		}
 		
 		void OnCollisionEnter2D(Collision2D other){
-			if ( (OnHit != 2) && (other.collider.name == "BS_Boss") && (!Invincible) ){
-				if (!Dead) {
+			if ( (_onHit != 2) && (other.collider.name == "BS_Boss") && (!isInvincible) ){
+				if (!isDead) {
 					GenEffect(Get_Angle_byPosition(this.transform.position, other.collider.GetComponent<Transform>().position), 25f, 2f, 10);
 					OnDamage();
 				}
 			}
-			if ( (OnHit == 2) && (other.collider.name == "BS_Boss") ){
+			if ( (_onHit == 2) && (other.collider.name == "BS_Boss") ){
 				GenEffect(Get_Angle_byPosition(other.collider.GetComponent<Transform>().position, this.transform.position)+60f, 30f, 3f, 8);
 				GenEffect(Get_Angle_byPosition(other.collider.GetComponent<Transform>().position, this.transform.position)-60f, 30f, 3f, 8);
 
 				BossBehavior bossScript = other.collider.GetComponent<BossBehavior>();
 				bossScript.OnDamaged(Math_Boss_Damage());
-				AttackSuccess = true;
+				attackSuccess = true;
 				_animController.AttackSuccess();
 			}
 			
@@ -319,16 +318,16 @@ namespace BS.Player{
 		}
 		
 		private void Update(){
-			if (!Dead){
+			if (!isDead){
 				InputAttack();
 				InputMove();
 			}
 			else {
-				OnHit = 0;
+				_onHit = 0;
 				_rigid.angularDrag = 0.2f;
 				_rigid.drag = 0.2f;
 				_rigid.gravityScale = 9.8f;
-				_collider.sharedMaterial = Normal;
+				_collider.sharedMaterial = _normal;
 			}
 			
 			Caring();

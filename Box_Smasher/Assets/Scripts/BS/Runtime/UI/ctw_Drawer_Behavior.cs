@@ -41,7 +41,7 @@ public class ctw_Drawer_Behavior : MonoBehaviour
 	
 	void Draw_Hearts(){
 		
-		float PlayerHP = GameObject.Find("BS_Player").GetComponent<PlayerController>().HP;
+		float PlayerHP = GameObject.Find("BS_Player").GetComponent<PlayerController>()._health;
 		
 		for(int i = 0; i <= 2; i++){
 			
