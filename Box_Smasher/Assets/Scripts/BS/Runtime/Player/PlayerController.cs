@@ -44,7 +44,14 @@ namespace BS.Player{
 			get{
 				return _physicManager;
 			}
-		} 
+		}
+
+		public PlayerAnimController AnimController{
+			get{
+				return _animController;
+			}
+		}
+
 		public bool IsControllable {
 			get{
 				return _isControllable;

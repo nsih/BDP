@@ -7,6 +7,7 @@ using UnityEngine;
 /// <summary>
 /// 플레이어의 물리 관련 처리를 위한 컴포넌트
 /// </summary>
+/// 플레이어가 일정 각도 이상은 못 올라가도록 해야겠음
 namespace BS.Player{
     public class PlayerPhysicController : MonoBehaviour
     {
@@ -26,6 +27,14 @@ namespace BS.Player{
 
         private PlayerController _player;
         private Rigidbody2D _rigid;
+
+        public void Freeze(){
+            _rigid.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
+
+        public void UnFreeze(){
+            _rigid.constraints = RigidbodyConstraints2D.None;
+        }
 
         public void AddForce(Vector2 dir){
             _rigid.AddForce(dir);

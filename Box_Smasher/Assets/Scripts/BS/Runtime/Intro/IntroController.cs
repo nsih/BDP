@@ -23,14 +23,28 @@ namespace BS.Intro.Manager{
             IntroStartArea.OnEnter += OnEnter;
         }
 
+        private void Start()
+        {
+            _player.PhysicManager.Freeze();
+            _player.AnimController.Off();
+        }
+
         void OnEnter(GameObject obj){
             _player.IsControllable = true;
             IntroStartArea.OnEnter -= OnEnter;
             obj.SetActive(false);
         }
 
-        void OnPlay(){
+        IEnumerator StartIntroLoop(){
+            yield return StartCoroutine(_startMenu.FadeOutStartMenuLoop(2f));
+            _player.AnimController.On();
+            _player.PhysicManager.UnFreeze();
             _player.PhysicManager.AddForce(Vector2.one * 300);
+            yield return null;
+        }
+
+        void OnPlay(){
+            StartCoroutine(StartIntroLoop());
             _startMenu.OnPlay -= OnPlay;
         }
     }

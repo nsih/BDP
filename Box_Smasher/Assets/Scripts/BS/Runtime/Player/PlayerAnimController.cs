@@ -129,6 +129,16 @@ namespace BS.Player
                 SetSpriteAlpha(0.35f);
             }
         }
+
+        public void Off(){
+            _bodyAnimator.SetTrigger("BlackNoise");
+            _faceSprite.gameObject.SetActive(false);
+        }
+
+        public void On(){
+            _bodyAnimator.SetTrigger("Idle");
+            _faceSprite.gameObject.SetActive(true);
+        }
         
         /// <summary>
         /// 이동 방향에 따라 Player sprite를 좌우로 뒤집습니다.
@@ -177,25 +187,6 @@ namespace BS.Player
             _faceAnimator.SetBool("Falling", _player.IsFalling() && !_player._isCharging && !_player._attackSuccess);
             
             FlipSprite();
-        }
-
-        /// <summary>
-        /// 디버깅 용
-        /// 아직 제대로 만들지 않음
-        /// </summary>
-        private void OnDrawGizmos()
-        {
-            if(_bodySprite != null){
-                float distance = 1f;
-                // Left
-                Gizmos.color = Color.yellow;
-                Vector3 dst = (_bodySprite.transform.position - new Vector3(distance * _bodySprite.transform.localScale.x, 0, 0));
-                Gizmos.DrawLine(_bodySprite.transform.position, dst);
-                // Up
-                Gizmos.color = Color.blue;
-                dst = (_bodySprite.transform.position - new Vector3(0, distance * _bodySprite.transform.localEulerAngles.y, 0));
-                Gizmos.DrawLine(_bodySprite.transform.position, dst);
-            }
         }
     }
 }

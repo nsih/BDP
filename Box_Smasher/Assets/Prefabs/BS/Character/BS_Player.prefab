@@ -334,6 +334,7 @@ MonoBehaviour:
   _isCharging: 0
   _isDead: 0
   _attackSuccess: 0
+  _isControllable: 0
 --- !u!114 &1670216328
 MonoBehaviour:
   m_ObjectHideFlags: 0
