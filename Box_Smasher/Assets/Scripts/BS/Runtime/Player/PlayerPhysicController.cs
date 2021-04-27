@@ -27,6 +27,10 @@ namespace BS.Player{
         private PlayerController _player;
         private Rigidbody2D _rigid;
 
+        public void AddForce(Vector2 dir){
+            _rigid.AddForce(dir);
+        }
+
         public void Init(PlayerController player, Rigidbody2D rigid){
             _player = player;
             _rigid = rigid;

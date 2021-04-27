@@ -243,13 +243,13 @@ GameObject:
   m_Component:
   - component: {fileID: 628286941257426824}
   - component: {fileID: 628286941257426551}
-  - component: {fileID: 628286941257426550}
   - component: {fileID: 1060042580}
+  - component: {fileID: 628286941257426550}
   - component: {fileID: 1670216328}
   - component: {fileID: 1670216329}
   m_Layer: 0
   m_Name: BS_Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -291,6 +291,22 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!70 &1060042580
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 628286941257426547}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 6200000, guid: 90cbc8f6e1cfa454980ff6f7d401771f, type: 2}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1.07, y: 0.7}
+  m_Direction: 1
 --- !u!114 &628286941257426550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,35 +324,16 @@ MonoBehaviour:
   _bodyAnimator: {fileID: 5762887641646660150}
   _faceAnimator: {fileID: 7335033103268225992}
   _eraser: {fileID: 0}
-  Normal: {fileID: 6200000, guid: 90cbc8f6e1cfa454980ff6f7d401771f, type: 2}
-  Bouncy: {fileID: 6200000, guid: 8da0d72db1317cc42a53d74af1e14b20, type: 2}
+  _normal: {fileID: 0}
+  _bouncy: {fileID: 0}
   _moveDirection: 0
-  DOWN: 1
-  OnHit: 0
-  HP: 300
-  Invincible: 0
-  IsCharging: 0
-  IsFalling: 0
-  Dead: 0
-  AttackSuccess: 0
-  OnAir: 0
-  _isMoving: 0
---- !u!70 &1060042580
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 628286941257426547}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: 90cbc8f6e1cfa454980ff6f7d401771f, type: 2}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1.07, y: 0.7}
-  m_Direction: 1
+  _down: 0
+  _onHit: 0
+  _health: 3
+  _isInvincible: 0
+  _isCharging: 0
+  _isDead: 0
+  _attackSuccess: 0
 --- !u!114 &1670216328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,9 +348,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _groundLayers:
     serializedVersion: 2
-    m_Bits: 0
-  _groundRadius: 0.2
+    m_Bits: 512
+  _bulletLayers:
+    serializedVersion: 2
+    m_Bits: 1024
+  _groundRadius: 0.3
   _isGrounded: 0
+  _isFalling: 0
+  _onAir: 0
+  _isMoving: 0
 --- !u!114 &1670216329
 MonoBehaviour:
   m_ObjectHideFlags: 0

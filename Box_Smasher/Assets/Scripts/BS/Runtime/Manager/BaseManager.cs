@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace BS.Manager{
+    /// <summary>
+    /// 매니저 스크립트를 위한 싱글톤 클래스
+    /// </summary>
+    /// <typeparam name="T">Class Type</typeparam>
     public class BaseManager<T> : MonoBehaviour where T : class, new()
     {
         protected static T _instance;

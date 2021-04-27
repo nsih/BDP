@@ -3,17 +3,26 @@ using System.Collections.Generic;
 using BS.Utils;
 using UnityEngine;
 
-public class StartMenuManager : MonoBehaviour
-{
-    public void Play(){
-        Debug.Log("게임 시작");
-    }
 
-    public void Settings(){
-        Debug.Log("설정 보기");
-    }
+namespace BS.UI{    
+    public class StartMenuManager : MonoBehaviour
+    {
+        public delegate void OnPlayEvent();
+        public event OnPlayEvent OnPlay;
 
-    public void Exit(){
-        AppHelper.Quit();
+        public void Play(){
+            Debug.Log("게임 시작");
+            if(OnPlay != null){
+                OnPlay();
+            }
+        }
+
+        public void Settings(){
+            Debug.Log("설정 보기");
+        }
+
+        public void Exit(){
+            AppHelper.Quit();
+        }
     }
 }
