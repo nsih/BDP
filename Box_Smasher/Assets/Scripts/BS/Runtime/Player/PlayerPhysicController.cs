@@ -57,7 +57,7 @@ namespace BS.Player{
 
             Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundChecker.position, _groundRadius, _groundLayers);
             for(int i = 0; i < colliders.Length; i++){
-                if(colliders[i].gameObject != gameObject){
+                if(colliders[i].gameObject != this.gameObject){
                     _isGrounded = true;
                     _player.ProcessEffect(colliders[i]);
                 }

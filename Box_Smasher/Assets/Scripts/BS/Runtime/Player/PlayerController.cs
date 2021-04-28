@@ -303,7 +303,7 @@ namespace BS.Player{
 				case "Platform":
 					ctw_Platform_behavior PlatformScript = other.GetComponent<ctw_Platform_behavior>();
 					
-					if ((PlatformScript.Trigger == false)&&(_rigid.velocity.y <= 0)){
+					if ( (PlatformScript.Trigger == false) && (_rigid.velocity.y <= 0) ){
 						if ( _physicManager._onAir ){
 							GenEffect(0f, 15f, 1f, 3);
 							GenEffect(180f, 15f, 1f, 3);

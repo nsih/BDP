@@ -93,9 +93,11 @@ namespace BS.Player
                 if(progress > 0.75f){
                     progress = 1f;
                 }
-        
+
+                _bodyAnimator.SetFloat("Charging", progress);
                 _faceAnimator.SetFloat("Charging", progress);
             }else{
+                _bodyAnimator.SetFloat("Charging", 0);
                 _faceAnimator.SetFloat("Charging", 0);
             }
         }

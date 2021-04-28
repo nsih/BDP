@@ -36,7 +36,7 @@ namespace BS.Intro.Manager{
         }
 
         IEnumerator StartIntroLoop(){
-            yield return StartCoroutine(_startMenu.FadeOutStartMenuLoop(2f));
+            yield return StartCoroutine(_startMenu.FadeOutStartMenuLoop(1f));
             _player.AnimController.On();
             _player.PhysicManager.UnFreeze();
             _player.PhysicManager.AddForce(Vector2.one * 300);
