@@ -47,7 +47,7 @@ public class BgmManager : MonoBehaviour
     
     public void BgmDistortion()
     {
-        if (Input.GetMouseButton(0) && player.GetComponent<PlayerController>().OnAir == 1 )
+        if (Input.GetMouseButton(0) && player.GetComponent<PlayerController>().OnAir() )
         {
             charghing.TransitionTo(.5f);
         }

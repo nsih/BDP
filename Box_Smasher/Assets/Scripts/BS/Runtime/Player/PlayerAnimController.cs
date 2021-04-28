@@ -87,7 +87,7 @@ namespace BS.Player
         /// </summary>
         protected void ChargingAnim(){
 
-            if(_player.IsCharging){
+            if(_player._isCharging){
                 float progress = (Mathf.Abs(_player._currentPower) / _player._maxPower) * 0.75f;
 
                 if(progress > 0.75f){
@@ -111,11 +111,11 @@ namespace BS.Player
         /// Player가 공격을 받아 무적 상태에 진입
         /// </summary>
         public void OnHit(){
-            if(_player.Invincible && !isBlink){
+            if(_player._isInvincible && !isBlink){
                 SpriteAlphaBlink(0.9f, 0.03f);
 
                 _bodyAnimator.SetTrigger("OnHit");
-                if(!_player.IsCharging){
+                if(!_player._isCharging){
                     _faceAnimator.SetTrigger("OnHit");
                 }
             }
@@ -125,9 +125,19 @@ namespace BS.Player
         /// Player 사망시 애니메이션 재생
         /// </summary>
         public void Dead(){
-            if(_player.Dead){
+            if(_player._isDead){
                 SetSpriteAlpha(0.35f);
             }
+        }
+
+        public void Off(){
+            _bodyAnimator.SetTrigger("BlackNoise");
+            _faceSprite.gameObject.SetActive(false);
+        }
+
+        public void On(){
+            _bodyAnimator.SetTrigger("Idle");
+            _faceSprite.gameObject.SetActive(true);
         }
         
         /// <summary>
@@ -140,7 +150,7 @@ namespace BS.Player
 
             int directionUpDown = 1;
             // Player가 Charging 중...
-            if(_player.IsCharging){
+            if(_player._isCharging){
                 if((90 < rotationZ) && (rotationZ < 270)){
                     directionUpDown = -1;
                 }
@@ -152,7 +162,7 @@ namespace BS.Player
 
             int directionLeftRight = prevLeftRightDirection;
             // Player가 Charging 중...
-            if(_player.IsCharging){
+            if(_player._isCharging){
                 Vector2 pos = this.transform.position;
 				Vector2 mouseOnWorld = CameraManager.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
 
@@ -174,26 +184,9 @@ namespace BS.Player
             ChargingAnim();
             
             // Player가 Charging 중이 아니면 Falling Animation
-            _faceAnimator.SetBool("Falling", _player.IsFalling && !_player.IsCharging && !_player.AttackSuccess);
+            _faceAnimator.SetBool("Falling", _player.IsFalling() && !_player._isCharging && !_player._attackSuccess);
             
             FlipSprite();
-        }
-
-        /// <summary>
-        /// 디버깅 용
-        /// 아직 제대로 만들지 않음
-        /// </summary>
-        private void OnDrawGizmos()
-        {
-            float distance = 1f;
-            // Left
-            Gizmos.color = Color.yellow;
-            Vector3 dst = (_bodySprite.transform.position - new Vector3(distance * _bodySprite.transform.localScale.x, 0, 0));
-            Gizmos.DrawLine(_bodySprite.transform.position, dst);
-            // Up
-            Gizmos.color = Color.blue;
-            dst = (_bodySprite.transform.position - new Vector3(0, distance * _bodySprite.transform.localEulerAngles.y, 0));
-            Gizmos.DrawLine(_bodySprite.transform.position, dst);
         }
     }
 }

@@ -25,8 +25,8 @@ public class SparkEffect : MonoBehaviour
     {
         CoolTimer();
 
-        if (player.GetComponent<PlayerController>().OnAir == 0 &&
-            player.GetComponent<PlayerController>().ismoving == 1 )
+        if ( !player.GetComponent<PlayerController>().OnAir() &&
+            player.GetComponent<PlayerController>().IsMoving() )
         {
             if (isCool == false)
                 Spark();
@@ -69,7 +69,7 @@ public class SparkEffect : MonoBehaviour
             int act = 0;
             foreach(var item  in sparkList)
             {
-                if(item.active == true)
+                if(item.activeSelf)
                 {
                     act++;
                 }
@@ -81,7 +81,7 @@ public class SparkEffect : MonoBehaviour
                 break;
             }
 
-            else if(sparkList[i].active == false)
+            else if(!sparkList[i].activeSelf)
             {
                 Vector2 sparkSpot 
                     = new Vector2(Random.Range(player.transform.position.x-1.0f, player.transform.position.x+1.0f) 
