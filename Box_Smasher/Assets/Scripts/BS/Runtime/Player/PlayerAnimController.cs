@@ -1,10 +1,11 @@
 ﻿using System.Collections;
+using BS.Anim;
 using BS.Manager.Cameras;
 using UnityEngine;
 
 namespace BS.Player
 {
-    public class PlayerAnimController : MonoBehaviour
+    public class PlayerAnimController : BaseAnimController
     {
         // 임시로 public으로 지정
         // Init 함수로 초기화 하는 게 좋을 지도 모름
@@ -18,8 +19,12 @@ namespace BS.Player
         protected SpriteRenderer _bodySprite;
         protected SpriteRenderer _faceSprite;
 
-        bool isBlink = false;
         int prevLeftRightDirection = 1;
+
+        /// <summary>
+        /// Base AnimController 초기화
+        /// </summary>
+        public override void Init(){}
 
         /// <summary>
         /// 플레이어 Animation Controller 초기화
@@ -44,40 +49,8 @@ namespace BS.Player
         /// <param name="t"> blink 지속 시간</param>
         /// <param name="freq"> alpha가 1이 되는 blink 주기</param>
         public void SpriteAlphaBlink(float t, float freq){
-            StartCoroutine(SpriteAlphaBlinkLoop(t, freq));
-        }
-
-        protected IEnumerator SpriteAlphaBlinkLoop(float t, float freq){
-            float duration = t;
-            isBlink = true;
-            while(duration > 0){
-                float x = (t - duration);
-                float alpha = Mathf.Abs(Mathf.Cos((Mathf.PI / freq) * x));
-                SetSpriteAlpha(alpha);
-
-                duration -= Time.deltaTime;
-                yield return null;
-            }
-        
-            isBlink = false;
-            SetSpriteAlpha(1f);
-            yield return null;
-        }
-
-        
-        /// <summary>
-        /// 플레이어의 sprite alpha를 set합니다.
-        /// </summary>
-        /// <param name="alpha"> set할 alpha값 </param>
-        protected void SetSpriteAlpha(float alpha){
-            _bodySprite.color = new Color(  _bodySprite.color.r,
-                                            _bodySprite.color.g,
-                                            _bodySprite.color.b,
-                                            alpha);
-            _faceSprite.color = new Color(  _faceSprite.color.r,
-                                            _faceSprite.color.g,
-                                            _faceSprite.color.b,
-                                            alpha);
+            StartCoroutine(SpriteAlphaBlinkLoop(_bodySprite, t, freq));
+            StartCoroutine(SpriteAlphaBlinkLoop(_faceSprite, t, freq));
         }
 
         /// <summary>
@@ -93,9 +66,11 @@ namespace BS.Player
                 if(progress > 0.75f){
                     progress = 1f;
                 }
-        
+
+                _bodyAnimator.SetFloat("Charging", progress);
                 _faceAnimator.SetFloat("Charging", progress);
             }else{
+                _bodyAnimator.SetFloat("Charging", 0);
                 _faceAnimator.SetFloat("Charging", 0);
             }
         }
@@ -126,7 +101,8 @@ namespace BS.Player
         /// </summary>
         public void Dead(){
             if(_player._isDead){
-                SetSpriteAlpha(0.35f);
+                SetSpriteAlpha(_bodySprite, 0.35f);
+                SetSpriteAlpha(_faceSprite, 0.35f);
             }
         }
 
@@ -180,7 +156,7 @@ namespace BS.Player
             _bodySprite.transform.localScale = scale;
         }
 
-        public void Render(){            
+        public override void Render(){            
             ChargingAnim();
             
             // Player가 Charging 중이 아니면 Falling Animation

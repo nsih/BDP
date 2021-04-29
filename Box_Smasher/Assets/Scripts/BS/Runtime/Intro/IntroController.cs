@@ -12,15 +12,21 @@ namespace BS.Intro.Manager{
     {
         public PlayerController _player;
         public StartMenuManager _startMenu;
+        public IntroStartArea _startArea;
 
         private void Awake()
         {
             if(_startMenu != null){
-                _startMenu.OnPlay += OnPlay;
+                _startMenu.Init();
+                _startMenu.OnPlay.AddListener(OnPlay);
             }else{
                 Debug.LogWarning("Intro에 Start Menu가 연결되어있지 않습니다.");
             }
-            IntroStartArea.OnEnter += OnEnter;
+
+            if(_startArea != null){
+                _startArea.Init();
+                _startArea.OnEnter.AddListener(OnEnter);
+            }
         }
 
         private void Start()
@@ -29,14 +35,12 @@ namespace BS.Intro.Manager{
             _player.AnimController.Off();
         }
 
-        void OnEnter(GameObject obj){
+        void OnEnter(){
             _player.IsControllable = true;
-            IntroStartArea.OnEnter -= OnEnter;
-            obj.SetActive(false);
         }
 
         IEnumerator StartIntroLoop(){
-            yield return StartCoroutine(_startMenu.FadeOutStartMenuLoop(2f));
+            yield return StartCoroutine(_startMenu.FadeOutStartMenuLoop(1f));
             _player.AnimController.On();
             _player.PhysicManager.UnFreeze();
             _player.PhysicManager.AddForce(Vector2.one * 300);
@@ -45,7 +49,6 @@ namespace BS.Intro.Manager{
 
         void OnPlay(){
             StartCoroutine(StartIntroLoop());
-            _startMenu.OnPlay -= OnPlay;
         }
     }
 }

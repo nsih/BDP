@@ -1,20 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using BS.Utils;
+using UnityEngine.Events;
 using UnityEngine;
 
 
 namespace BS.UI{    
     public class StartMenuManager : MonoBehaviour
     {
-        public delegate void OnPlayEvent();
-        public event OnPlayEvent OnPlay;
-
+        [HideInInspector]
+        public UnityEvent OnPlay;
         private CanvasGroup _canvas;
 
-        private void Awake()
-        {
+        public void Init(){
             _canvas = GetComponent<CanvasGroup>();
+            OnPlay = new UnityEvent();
         }
 
         public IEnumerator FadeOutStartMenuLoop(float t){
@@ -42,7 +42,7 @@ namespace BS.UI{
         public void Play(){
             Debug.Log("게임 시작");
             if(OnPlay != null){
-                OnPlay();
+                OnPlay.Invoke();
             }
         }
 
@@ -52,6 +52,10 @@ namespace BS.UI{
 
         public void Exit(){
             AppHelper.Quit();
+        }
+
+        private void OnDestroy(){
+            OnPlay.RemoveAllListeners();
         }
     }
 }

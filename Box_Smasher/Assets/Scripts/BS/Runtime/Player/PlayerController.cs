@@ -30,8 +30,7 @@ namespace BS.Player{
 		public float _moveDirection;
 		public bool _down = false;
 		public int _onHit = 0;
-		[ProgressBar("Health", 3, EColor.Red)]
-		public int _health = 3;
+		public int _health = 100;
 		public bool _isInvincible = false;
 		public bool _isCharging = false;
 		public bool _isDead = false;
@@ -303,7 +302,7 @@ namespace BS.Player{
 				case "Platform":
 					ctw_Platform_behavior PlatformScript = other.GetComponent<ctw_Platform_behavior>();
 					
-					if ((PlatformScript.Trigger == false)&&(_rigid.velocity.y <= 0)){
+					if ( (PlatformScript.Trigger == false) && (_rigid.velocity.y <= 0) ){
 						if ( _physicManager._onAir ){
 							GenEffect(0f, 15f, 1f, 3);
 							GenEffect(180f, 15f, 1f, 3);
