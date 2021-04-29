@@ -19,7 +19,8 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 	BulletEraser Eraser2;
 	
 	Transform PlayerTransform;
-	BossBehavior Boss;
+	BaseBoss _boss;
+	BossBehavior _bossBehavior;
 	
 	void Start(){
 		
@@ -32,7 +33,8 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 		Eraser2 = GameObject.Find("BS_Eraser_Boss").GetComponent<BulletEraser>();
 		
 		PlayerTransform = GameObject.Find("BS_Player").GetComponent<Transform>();
-		Boss = GameObject.Find("BS_Boss").GetComponent<BossBehavior>();
+		_boss = GameObject.Find("BS_Boss").GetComponent<BaseBoss>();
+		_bossBehavior = (BossBehavior)_boss.BossBehavior;
 		
 		BulletSprite.color = new Color(0f, 0f, 0f, 0f);
     }
@@ -48,15 +50,15 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 	
 	void Picking(){
 		
-		if (Boss.BulletPool != 0){
+		if (_bossBehavior._bulletIndex != 0){
 			Vector3 Player = PlayerTransform.position;
 			float Last = 500;
-			for(int i = 0;i<Boss.BulletPool; i++){
-				if (Boss.Bullet[i].GetComponent<Bullet>().OnWork == true){
-					Vector3 Bullets = Boss.Bullet[i].GetComponent<Transform>().position;
+			for(int i = 0;i<_bossBehavior._bulletIndex; i++){
+				if (_bossBehavior._bulletPool[i].GetComponent<Bullet>().OnWork == true){
+					Vector3 Bullets = _bossBehavior._bulletPool[i].GetComponent<Transform>().position;
 					if (Last > Math_2D_Range(Bullets,Player)){
 					Last = Math_2D_Range(Bullets,Player);
-					TargetBullet = Boss.Bullet[i];
+					TargetBullet = _bossBehavior._bulletPool[i];
 					}
 				}
 			}
@@ -69,7 +71,7 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 		if ( (Eraser1._sprite.enabled != false)||(Eraser2._sprite.enabled != false) ) OnWork = false;
 		else OnWork = true;
 		
-		if (Boss.DEAD){
+		if (_boss.IsDead){
 			OnWork = false;
 		}
 		

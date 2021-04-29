@@ -12,7 +12,7 @@ namespace BS.Player{
     public class PlayerPhysicController : MonoBehaviour
     {
         [SerializeField]
-        private LayerMask _groundLayers;
+        private LayerMask _groundLayers = 0;
         [SerializeField]
         private LayerMask _bulletLayers;
         private Transform _groundChecker;

@@ -30,8 +30,7 @@ namespace BS.Player{
 		public float _moveDirection;
 		public bool _down = false;
 		public int _onHit = 0;
-		[ProgressBar("Health", 3, EColor.Red)]
-		public int _health = 3;
+		public int _health = 100;
 		public bool _isInvincible = false;
 		public bool _isCharging = false;
 		public bool _isDead = false;
