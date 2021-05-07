@@ -1,13 +1,12 @@
-﻿
-Shader "Effects/ExplosionEffect"
+﻿Shader "Effects/ExplosionEffect"
 {
 	Properties
     {
-        [PerRendererData]_MainTex ("Texture", 2D) = "white" {}
-        _NoiseTex("Normal Texture", 2D) = "white" {}
+        _MainTex ("Main Texture", 2D) = "white" {}
+        _NoiseTex("Noise Texture", 2D) = "white" {}
         _PaletteMap("PaletteMap", 2D) = "white" {}
         _GradientMap("GradientMap", 2D) = "white" {}
-        _Offset("float", float) = 0
+        _Amount("Amount of gray", Range(0.0, 10.0)) = 0
     }
     SubShader
     {
@@ -15,12 +14,6 @@ Shader "Effects/ExplosionEffect"
         { 
             "RenderType" = "Transparent" "Queue" = "Transparent" 
         }
-
-        GrabPass
-        {
-            "_BackgroundTexture"
-        }
-
 
         Pass
         {
@@ -45,25 +38,23 @@ Shader "Effects/ExplosionEffect"
             {
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
-                float4 grabPos : TEXCOORD1;
             };
+
+            sampler2D _MainTex;
 
             v2f vert (appdata v)
             {
                 v2f o;
                 o.uv = v.uv;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.grabPos = ComputeGrabScreenPos(o.vertex);
 
                 return o;
             }
 
-            sampler2D _MainTex;
-            sampler2D _BackgroundTexture;
             sampler2D _NoiseTex;
             sampler2D _PaletteMap;
             sampler2D _GradientMap;
-            float _Offset;
+            float _Amount;
 
             float rand(float2 co){
                 return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453);
@@ -71,29 +62,21 @@ Shader "Effects/ExplosionEffect"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float4 displacementPixel = tex2D(_NoiseTex, i.uv);
+                float4 noisePixel = tex2D(_NoiseTex, i.uv);
 
-                float2 pos = i.grabPos / i.grabPos.w;
-                pos.x += (displacementPixel.r * 2.0 - 1.0) * 0.025;
-                pos.y -= (displacementPixel.g * 2.0 - 1.0) * 0.025;
+                float2 pos = i.uv;
+                pos.x += (noisePixel.r * 2.0 - 1.0) * 0.025;
+                pos.y -= (noisePixel.g * 2.0 - 1.0) * 0.025;
 
                 // get the displaced pixel
-                float4 pixel = tex2D(_BackgroundTexture, pos);
+                float4 pixel = tex2D(_MainTex, pos);
 
-                // proper grayscale conversion.
-                float gray = dot(pixel.rgb, float3(0.299, 0.587, 0.114));
-                float4 palettePixel = tex2D(_PaletteMap, gray);
+                // grayscale conversion
+                float gray = Luminance(pixel.rgb);
+                gray = mod(gray + _Amount, 1);
+                float4 palettePixel = tex2D(_PaletteMap, float2(gray, 1));
 
-                float gradientPos = mod(gray + palettePixel.g, 1);
-
-                // Get the color from the gradient
-                float4 gradientMapPixel = tex2D(_GradientMap, float2(gradientPos, palettePixel.r));
-                
-                pixel = lerp(pixel, gradientMapPixel, palettePixel.a);
-
-                float4 color = tex2D(_MainTex, i.uv);
-                float4 fragColor = pixel;
-                fragColor.a = color.a;
+                float4 fragColor = pixel + palettePixel * noisePixel.a;
 
                 return fragColor;
             }
