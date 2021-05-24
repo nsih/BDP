@@ -20,6 +20,8 @@ jobs:
           - 2019.4.2f1
         targetPlatform:
           - StandaloneWindows64
+        testMode:
+          - playmode
 
     steps:
       # Checkout
@@ -60,7 +62,7 @@ jobs:
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          testMode: PlayMode
+          testMode: ${{ matrix.testMode }}
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
