@@ -72,11 +72,11 @@
                 float4 pixel = tex2D(_MainTex, pos);
 
                 // grayscale conversion
-                float gray = Luminance(pixel.rgb);
-                gray = mod(gray + _Amount, 1);
-                float4 palettePixel = tex2D(_PaletteMap, float2(gray, 1));
+                // float gray = Luminance(pixel.rgb);
+                // gray = mod(gray + _Amount, 1);
+                // float4 palettePixel = tex2D(_PaletteMap, float2(gray, 1));
 
-                float4 fragColor = pixel + palettePixel * noisePixel.a;
+                float4 fragColor = pixel;
 
                 return fragColor;
             }

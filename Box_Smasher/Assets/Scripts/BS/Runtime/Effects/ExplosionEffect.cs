@@ -32,6 +32,7 @@ public class ExplosionEffect : MonoBehaviour
             var renderer = this.gameObject.GetComponent<SpriteRenderer>();
             // renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 0f);
             renderer.enabled = false;
+            this.gameObject.SetActive(false);
         }
     }
 }
