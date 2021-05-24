@@ -85,6 +85,7 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
+          allowDirtyBuild: true
 
       # Output
       - uses: actions/upload-artifact@v2
