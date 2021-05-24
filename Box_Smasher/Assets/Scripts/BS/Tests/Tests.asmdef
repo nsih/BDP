@@ -5,7 +5,6 @@
         "UnityEditor.TestRunner"
     ],
     "includePlatforms": [
-        "Editor",
         "WindowsStandalone64"
     ],
     "excludePlatforms": [],

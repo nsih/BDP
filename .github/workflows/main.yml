@@ -35,8 +35,9 @@ jobs:
       # Cache
       - uses: actions/cache@v2
         with:
-          path: ${{ matrix.targetPlatform }}/Library
-          key: Library
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
 
       # Nodejs
       - name: Setup Node
@@ -86,8 +87,8 @@ jobs:
       # Output
       - uses: actions/upload-artifact@v2
         with:
-          name: Build
-          path: ${{ matrix.targetPlatform }}/build
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
 
       # Release with semantic
       - name: Release
