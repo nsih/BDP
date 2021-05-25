@@ -5,6 +5,8 @@ on:
   push:
     branches: [ master ]
   pull_request:
+    paths-ignore:
+      - '.github/**'
     branches: [ master ]
 
 jobs:
@@ -33,12 +35,13 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha }}
         
       # Cache
-      # - uses: actions/cache@v2
-      #   with:
-      #     path: ${{ matrix.projectPath }}/Library
-      #     key: Library-${{ matrix.targetPlatform }}
-      #     restore-keys: |
-      #       Library-
+      - uses: actions/cache@v2
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-
+            Library-
 
       # Nodejs
       - name: Setup Node
@@ -70,11 +73,12 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/upload-artifact@v2
-        if: always()
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.testRunner.outputs.artifactsPath }}
+          retention-days: 14
 
       # Build
       - name: Build Project
@@ -88,10 +92,12 @@ jobs:
           allowDirtyBuild: true
 
       # Output
-      - uses: actions/upload-artifact@v2
+      - name: Upload built file
+        uses: actions/upload-artifact@v2
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
+          retention-days: 14
 
       # Release with semantic
       - name: Release
