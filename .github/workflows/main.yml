@@ -78,11 +78,14 @@ jobs:
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.testRunner.outputs.artifactsPath }}
-          retention-days: 14
+          retention-days: 7
+
+      #### build if branch is main branch ####
 
       # Build
       - name: Build Project
         uses: game-ci/unity-builder@v2
+        if: github.base_ref == 'master'
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
@@ -94,6 +97,7 @@ jobs:
       # Output
       - name: Upload built file
         uses: actions/upload-artifact@v2
+        if: github.base_ref == 'master'
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
@@ -101,6 +105,7 @@ jobs:
 
       # Release with semantic
       - name: Release
+        if: github.base_ref == 'master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run semantic-release

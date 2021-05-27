@@ -38,7 +38,7 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
     }
 	
 	public void Hitted(){
-		TargetBullet.GetComponent<Bullet>().OnWork = false;
+		TargetBullet.GetComponent<ctw_Bullet_Collider_Script>().OnWork = false;
 	}
 	
 	float Math_2D_Range(Vector3 Pos1, Vector3 Pos2){
@@ -52,7 +52,7 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 			Vector3 Player = PlayerTransform.position;
 			float Last = 500;
 			for(int i = 0;i<_bossBehavior._bulletIndex; i++){
-				if (_bossBehavior._bulletPool[i].GetComponent<Bullet>().OnWork == true){
+				if (_bossBehavior._bulletPool[i].GetComponent<ctw_Bullet_Collider_Script>().OnWork == true){
 					Vector3 Bullets = _bossBehavior._bulletPool[i].GetComponent<Transform>().position;
 					if (Last > Math_2D_Range(Bullets,Player)){
 					Last = Math_2D_Range(Bullets,Player);

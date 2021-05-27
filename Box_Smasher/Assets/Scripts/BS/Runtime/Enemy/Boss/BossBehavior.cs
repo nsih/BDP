@@ -190,7 +190,7 @@ namespace BS.Enemy.Boss{
             
             if (_bulletIndex != 0){
                 for(;i<_bulletIndex; i++){
-                    if (_bulletPool[i].GetComponent<Bullet>().OnWork == false){
+                    if (_bulletPool[i].GetComponent<ctw_Bullet_Collider_Script>().OnWork == false){
                         Key = 1;
                         break;
                     }
@@ -208,37 +208,37 @@ namespace BS.Enemy.Boss{
 		// 인자는 순서대로 발사속도, 목표좌표, 총알의 발사각도, 총알이 발사되기까지 기다리는 틱, 총알의 회전력
         void Attack_SetBullet(float Force,Vector3 target,Quaternion rotation, float Timer_t, float roll){
             
-            GameObject Bullet = Attack_CheckandReturn();
-            Vector3 BossPos = this.transform.position;
+            // GameObject Bullet = Attack_CheckandReturn();
+            // Vector3 BossPos = this.transform.position;
             
-            Transform BulletTransform = Bullet.GetComponent<Transform>();
-            Bullet BulletScript = Bullet.GetComponent<Bullet>();
+            // Transform BulletTransform = Bullet.GetComponent<Transform>();
+            // Bullet BulletScript = Bullet.GetComponent<Bullet>();
             
-            BulletTransform.position = BossPos;
-            BulletTransform.rotation = rotation;
-            BulletScript.Vel = target.normalized * Force;
-            BulletScript.OnWork = true;
-            BulletScript.Timer = Timer_t;
-            BulletScript.Roll = roll;
-            BulletScript.Alpha = 0f;			// 총알의 투명도(Alpha)는 발사 후 1으로 초기화됨
+            // BulletTransform.position = BossPos;
+            // BulletTransform.rotation = rotation;
+            // BulletScript.Vel = target.normalized * Force;
+            // BulletScript.OnWork = true;
+            // BulletScript.Timer = Timer_t;
+            // BulletScript.Roll = roll;
+            // BulletScript.Alpha = 0f;			// 총알의 투명도(Alpha)는 발사 후 1으로 초기화됨
         }
         
 		// 총알의 위치를 특정 위치로 초기화하고 공격에 사용하는 데에 쓰이는 함수
 		// 인자는 순서대로 발사속도, 목표좌표, 총알의 발사각도, 총알이 발사되기까지 기다리는 틱, 총알의 회전력, 발사가 시작될 위치
         void Attack_TeleportBullet(float Force,Vector3 target,Quaternion rotation, float Timer_t, float roll, Vector3 TPlocation){
             
-            GameObject Bullet = Attack_CheckandReturn();
+            // GameObject Bullet = Attack_CheckandReturn();
             
-            Transform BulletTransform = Bullet.GetComponent<Transform>();
-            Bullet BulletScript = Bullet.GetComponent<Bullet>();
+            // Transform BulletTransform = Bullet.GetComponent<Transform>();
+            // Bullet BulletScript = Bullet.GetComponent<Bullet>();
             
-            BulletTransform.position = TPlocation;
-            BulletTransform.rotation = rotation;
-            BulletScript.Vel = target.normalized * Force;
-            BulletScript.OnWork = true;
-            BulletScript.Timer = Timer_t;
-            BulletScript.Roll = roll;
-            BulletScript.Alpha = 0f;
+            // BulletTransform.position = TPlocation;
+            // BulletTransform.rotation = rotation;
+            // BulletScript.Vel = target.normalized * Force;
+            // BulletScript.OnWork = true;
+            // BulletScript.Timer = Timer_t;
+            // BulletScript.Roll = roll;
+            // BulletScript.Alpha = 0f;
         }
         
         #region 공격 패턴
