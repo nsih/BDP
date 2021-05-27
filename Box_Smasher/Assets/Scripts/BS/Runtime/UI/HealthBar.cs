@@ -10,6 +10,10 @@ namespace BS.UI
         public Slider _slider;
         public Image _innerFillImage;
 
+        public void Init(){
+            _slider.gameObject.SetActive(true);
+        }
+
         public void SetMaxHealth(float health){
             _slider.maxValue = health;
             _slider.value = health;
