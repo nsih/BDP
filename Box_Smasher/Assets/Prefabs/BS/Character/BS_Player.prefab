@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 628286940262280423}
   - component: {fileID: 628286940262280440}
   - component: {fileID: 5762887641646660150}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 628286940586374820}
   - component: {fileID: 628286940586374821}
   - component: {fileID: 7335033103268225992}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -211,7 +211,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 628286941156028410}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,7 +247,7 @@ GameObject:
   - component: {fileID: 628286941257426550}
   - component: {fileID: 1670216328}
   - component: {fileID: 1670216329}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BS_Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -290,7 +290,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 7
 --- !u!70 &1060042580
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -351,9 +351,6 @@ MonoBehaviour:
   _groundLayers:
     serializedVersion: 2
     m_Bits: 512
-  _bulletLayers:
-    serializedVersion: 2
-    m_Bits: 1024
   _groundRadius: 0.3
   _isGrounded: 0
   _isFalling: 0
@@ -380,7 +377,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 628286941435717085}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Face
   m_TagString: Untagged
   m_Icon: {fileID: 0}

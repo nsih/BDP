@@ -13,8 +13,6 @@ namespace BS.Player{
     {
         [SerializeField]
         private LayerMask _groundLayers = 0;
-        [SerializeField]
-        private LayerMask _bulletLayers;
         private Transform _groundChecker;
         public float _groundRadius = .2f; // ground를 체크하는 콜라이더의 지름
         

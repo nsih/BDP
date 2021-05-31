@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using BS.Manager;
+using BS.Projectile;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace BS.Utils{
-    public class ObjectPool<T> : BaseManager<ObjectPool<T>> where T : class, new()
+    public class ObjectPool : BaseManager<ObjectPool>
     {
-        private Queue<T> _pool;
-        private int _count;
+        private Queue<Bullet> _pool = null;
+        [ShowNonSerializedField]
+        private int _count = 0;
 
         #region get
         /// <summary>
@@ -29,17 +32,19 @@ namespace BS.Utils{
         }
         #endregion
 
-        public void Enqueue(T obj){
+        public void Enqueue(Bullet obj){
             if(_pool == null){
-                _pool = new Queue<T>();
+                _pool = new Queue<Bullet>();
             }
-            _pool.Enqueue(obj);
+
             _count++;
+            _pool.Enqueue(obj);
         }
 
-        public T Dequeue(){
-            if(_pool.Count <= 0){
+        public Bullet Dequeue(){
+            if(_pool.Count == 0){
                 Debug.LogWarning("Pool의 숫자가 부족합니다.");
+                return null;
             }
 
             _count--;

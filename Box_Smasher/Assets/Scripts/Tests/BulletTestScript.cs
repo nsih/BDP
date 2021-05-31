@@ -1,30 +1,40 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.IO.Compression;
+using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using BS.Projectile;
 
-namespace Tests
-{
-    public class BulletTestScript
-    {
-        // A Test behaves as an ordinary method
+namespace Test{
+    public class BulletTestScript{
+
         [Test]
-        public void 간단한_테스트()
-        {
+        public void Bullet_Init_Rigid_Test(){
+            var gameObj = new GameObject();
+            var rigid = gameObj.AddComponent<Rigidbody2D>();
+            var bullet = gameObj.AddComponent<Bullet>();
+
+            float speed = 3.5f;
+            bullet.Init(speed);
+
             // Use the Assert class to test conditions
-            Assert.AreEqual(true, true);
+            Assert.AreEqual(bullet.Speed, speed);
         }
 
-        // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-        // `yield return null;` to skip a frame.
-        [UnityTest]
-        public IEnumerator NewTestScriptWithEnumeratorPasses()
-        {
-            // Use the Assert class to test conditions.
-            // Use yield to skip a frame.
-            yield return null;
+        [Test]
+        public void Bullet_Init_Speed_Test(){
+            var gameObj = new GameObject();
+            var rigid = gameObj.AddComponent<Rigidbody2D>();
+            var bullet = gameObj.AddComponent<Bullet>();
+
+            float speed = 3.5f;
+            bullet.Init(speed);
+
+            // Use the Assert class to test conditions
+            Assert.AreEqual(bullet.Rigid, rigid);
         }
     }
 }

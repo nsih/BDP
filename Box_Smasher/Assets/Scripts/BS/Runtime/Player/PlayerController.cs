@@ -160,6 +160,7 @@ namespace BS.Player{
 		}
 		#endregion
 
+		#region 충돌 처리
 		// Checks
 		void OnDamage(){
 			if (_health > 1){
@@ -187,7 +188,14 @@ namespace BS.Player{
 			Vector3 pos = this.transform.position;
 			_effector?.Effect_Run(time, pos, Get_Force_byAngle(angle)*F, num);
 		}
+
+		public virtual void OnHit(){
+			Debug.Log("Player 맞음");
+			OnDamage();
+		}
 		
+		#endregion
+
 		// Inputs
 		
 		void InputMove(){
