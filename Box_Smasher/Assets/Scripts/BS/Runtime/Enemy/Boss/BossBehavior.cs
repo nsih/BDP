@@ -2,14 +2,12 @@
 using BS.BehaviorTrees.Trees;
 using BS.BehaviorTrees.Tasks;
 using BS.Manager.Cameras;
+using BS.Utils;
 using UnityEngine;
 
 namespace BS.Enemy.Boss{
     public class BossBehavior : BaseBossBehavior{
-        public GameObject BulletPrefab;			// 미리 만들어진 총알을 참조용으로 불러오는 변수
-        
-        public GameObject[] _bulletPool = new GameObject[250];
-        public int _bulletIndex = 0;
+        public GameObject _bulletPrefab;			// 미리 만들어진 총알을 참조용으로 불러오는 변수
         
         int AttackType = 0;
         
@@ -21,6 +19,7 @@ namespace BS.Enemy.Boss{
 
         public override void Init(){
             base.Init();
+            InitBullet();
             _boss.SetMaxHealth(10000);
 
             #region behavior tree
@@ -115,6 +114,15 @@ namespace BS.Enemy.Boss{
                     .Build();
             #endregion
         }
+
+        private void InitBullet(){
+            for(int i = 0; i < 100; i++){
+                var gameObj = Instantiate(_bulletPrefab);
+                Bullet bullet = gameObj.GetComponent<Bullet>();
+                bullet.transform.SetParent(this.transform);
+                bullet.Disable();
+            }
+        }
         
         // Timers
         
@@ -175,70 +183,29 @@ namespace BS.Enemy.Boss{
         
         // Attacks
         
-		// 총알을 Instance화 하여 반환
-        GameObject Attack_Gen_Bullet(){
-            _bulletIndex++;
-            
-            return Instantiate(BulletPrefab, this.transform);
-        }
-        
-		// 공격에 필요한 sleep 상태에 있는 총알(Onwork == false)이 존재하면 그것을 반환, 존재하지 않으면 새로운 총알 Instance 반환
-        GameObject Attack_CheckandReturn(){
-            
-            int Key = 0;
-            int i = 0;
-            
-            if (_bulletIndex != 0){
-                for(;i<_bulletIndex; i++){
-                    if (_bulletPool[i].GetComponent<ctw_Bullet_Collider_Script>().OnWork == false){
-                        Key = 1;
-                        break;
-                    }
-                }
-            }
-            
-            if (Key == 0){
-                _bulletPool[i] = Attack_Gen_Bullet();
-            }
-            
-            return _bulletPool[i];
-        }
-        
 		// 총알의 위치를 보스의 위치로 초기화하고 공격에 사용하는 데에 쓰이는 함수
 		// 인자는 순서대로 발사속도, 목표좌표, 총알의 발사각도, 총알이 발사되기까지 기다리는 틱, 총알의 회전력
-        void Attack_SetBullet(float Force,Vector3 target,Quaternion rotation, float Timer_t, float roll){
+        void FireBullet(float speed, Vector3 dest, float rotationZ){
+            Vector3 BossPos = this.transform.position;
+            Bullet bullet = ObjectPool.Instance.Dequeue();
             
-            // GameObject Bullet = Attack_CheckandReturn();
-            // Vector3 BossPos = this.transform.position;
-            
-            // Transform BulletTransform = Bullet.GetComponent<Transform>();
-            // Bullet BulletScript = Bullet.GetComponent<Bullet>();
-            
-            // BulletTransform.position = BossPos;
-            // BulletTransform.rotation = rotation;
-            // BulletScript.Vel = target.normalized * Force;
-            // BulletScript.OnWork = true;
-            // BulletScript.Timer = Timer_t;
-            // BulletScript.Roll = roll;
-            // BulletScript.Alpha = 0f;			// 총알의 투명도(Alpha)는 발사 후 1으로 초기화됨
+            bullet.Init(this.transform.position, 10f);
+            bullet.SetRotation(rotationZ);
+            bullet.SetDirection(dest.normalized);
+            bullet.Speed = speed;
+            bullet.Move();
         }
         
 		// 총알의 위치를 특정 위치로 초기화하고 공격에 사용하는 데에 쓰이는 함수
 		// 인자는 순서대로 발사속도, 목표좌표, 총알의 발사각도, 총알이 발사되기까지 기다리는 틱, 총알의 회전력, 발사가 시작될 위치
-        void Attack_TeleportBullet(float Force,Vector3 target,Quaternion rotation, float Timer_t, float roll, Vector3 TPlocation){
-            
-            // GameObject Bullet = Attack_CheckandReturn();
-            
-            // Transform BulletTransform = Bullet.GetComponent<Transform>();
-            // Bullet BulletScript = Bullet.GetComponent<Bullet>();
-            
-            // BulletTransform.position = TPlocation;
-            // BulletTransform.rotation = rotation;
-            // BulletScript.Vel = target.normalized * Force;
-            // BulletScript.OnWork = true;
-            // BulletScript.Timer = Timer_t;
-            // BulletScript.Roll = roll;
-            // BulletScript.Alpha = 0f;
+        void TeleportBullet(float speed, Vector3 dest, float rotationZ, Vector3 TPlocation){
+            Bullet bullet = ObjectPool.Instance.Dequeue();
+
+            bullet.Init(TPlocation, 10f);
+            bullet.SetRotation(rotationZ);
+            bullet.SetDirection(dest.normalized);
+            bullet.Speed = speed;
+            bullet.Move();
         }
         
         #region 공격 패턴
@@ -248,8 +215,8 @@ namespace BS.Enemy.Boss{
             float randomj = Random.Range(-1.0f,1.0f);
             randomj = randomj/Mathf.Abs(randomj);
             for(float i = -180; i<180; i+=20){
-                Attack_SetBullet(25f, TranformAngleToVector(i+randomi), Quaternion.AngleAxis(i+randomi, Vector3.forward), 0f, -0.25f*randomj);
-                Attack_SetBullet(18f, TranformAngleToVector(i-10+randomi), Quaternion.AngleAxis(i-10+randomi, Vector3.forward), 0f, 0.2f*randomj);
+                FireBullet(25f, TranformAngleToVector(i+randomi), i+randomi);
+                FireBullet(18f, TranformAngleToVector(i-10+randomi), i+randomi);
             }
         }
         
@@ -257,9 +224,9 @@ namespace BS.Enemy.Boss{
             float randomi = Random.Range(0f,9f);
 
             for(float i = 0; i<360; i+=10){
-                Attack_SetBullet(25f, TranformAngleToVector(i+randomi), Quaternion.AngleAxis(i+randomi, Vector3.forward), i, 0f);
-                Attack_SetBullet(25f, TranformAngleToVector(120+i+randomi), Quaternion.AngleAxis(120+i+randomi, Vector3.forward), i, 0f);
-                Attack_SetBullet(25f, TranformAngleToVector(240+i+randomi), Quaternion.AngleAxis(240+i+randomi, Vector3.forward), i, 0f);
+                FireBullet(25f, TranformAngleToVector(i+randomi), i+randomi);
+                FireBullet(25f, TranformAngleToVector(120+i+randomi), 120+i+randomi);
+                FireBullet(25f, TranformAngleToVector(240+i+randomi), 240+i+randomi);
             }
         }
         
@@ -269,9 +236,9 @@ namespace BS.Enemy.Boss{
                 
                 float randomi = Random.Range(0f,50f);
                 
-                Attack_SetBullet(10f-(i/120f), TranformAngleToVector(i+randomi), Quaternion.AngleAxis(i+randomi, Vector3.forward), i, 0f);
-                Attack_SetBullet(10f-(i/120f), TranformAngleToVector(120+i+randomi), Quaternion.AngleAxis(120+i+randomi, Vector3.forward), i, 0f);
-                Attack_SetBullet(10f-(i/120f), TranformAngleToVector(240+i+randomi), Quaternion.AngleAxis(240+i+randomi, Vector3.forward), i, 0f);
+                FireBullet(10f-(i/120f), TranformAngleToVector(i+randomi), i+randomi);
+                FireBullet(10f-(i/120f), TranformAngleToVector(120+i+randomi), i+randomi);
+                FireBullet(10f-(i/120f), TranformAngleToVector(240+i+randomi), i+randomi);
             }
         }
         
@@ -280,9 +247,9 @@ namespace BS.Enemy.Boss{
             float distance = Vector2.Distance(_player.transform.position, this.transform.position);
             float angle = GetAngleToTarget(_player.transform.position);
             
-            Attack_SetBullet( (50f-distance), TranformAngleToVector(angle), Quaternion.AngleAxis(angle, Vector3.forward), 0f, 0f);
-            Attack_SetBullet( (50f-distance), TranformAngleToVector(angle+7), Quaternion.AngleAxis(angle+7, Vector3.forward), 0f, 0f);
-            Attack_SetBullet( (50f-distance), TranformAngleToVector(angle-7), Quaternion.AngleAxis(angle-7, Vector3.forward), 0f, 0f);
+            FireBullet( (50f-distance), TranformAngleToVector(angle), angle);
+            FireBullet( (50f-distance), TranformAngleToVector(angle+7), angle+7);
+            FireBullet( (50f-distance), TranformAngleToVector(angle-7), angle-7);
         }
         
         void Attack_Pattern_4()
@@ -293,7 +260,7 @@ namespace BS.Enemy.Boss{
             
             for(float i = 0;i < 360;i += 30){
                 Vector3 TargetPos = PlayerPos + TranformAngleToVector(i+randomi)*7f;
-                Attack_TeleportBullet(25f, TranformAngleToVector(i+randomi+180), Quaternion.AngleAxis(i+randomi+180, Vector3.forward), 120f, 0f, TargetPos);
+                TeleportBullet(25f, TranformAngleToVector(i+randomi+180), i+randomi+180, TargetPos);
             }
         }
         #endregion

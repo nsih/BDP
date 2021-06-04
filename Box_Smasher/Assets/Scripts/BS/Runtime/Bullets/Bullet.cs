@@ -30,6 +30,9 @@ namespace BS.Projectile{
 			get{
 				return _speed;
 			}
+			set{
+				_speed = value;
+			}
 		}
 
 		public Vector2 Direction{
@@ -86,6 +89,14 @@ namespace BS.Projectile{
 		/// <param name="dir"></param>
 		public void SetDirection(Vector2 dir){
 			_dir = dir;
+		}
+
+		/// <summary>
+		/// Bullet의 Z 각도를 조절합니다. 
+		/// </summary>
+		/// <param name="rotation"></param>
+		public void SetRotation(float rotation){
+			this.transform.rotation = Quaternion.AngleAxis(rotation, Vector3.forward);
 		}
 
 		/// <summary>

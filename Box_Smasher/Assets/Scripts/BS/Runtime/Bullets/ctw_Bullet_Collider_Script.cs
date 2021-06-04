@@ -48,19 +48,19 @@ public class ctw_Bullet_Collider_Script : MonoBehaviour
 	
 	void Picking(){
 		
-		if (_bossBehavior._bulletIndex != 0){
-			Vector3 Player = PlayerTransform.position;
-			float Last = 500;
-			for(int i = 0;i<_bossBehavior._bulletIndex; i++){
-				if (_bossBehavior._bulletPool[i].GetComponent<ctw_Bullet_Collider_Script>().OnWork == true){
-					Vector3 Bullets = _bossBehavior._bulletPool[i].GetComponent<Transform>().position;
-					if (Last > Math_2D_Range(Bullets,Player)){
-					Last = Math_2D_Range(Bullets,Player);
-					TargetBullet = _bossBehavior._bulletPool[i];
-					}
-				}
-			}
-		}
+		// if (_bossBehavior._bulletIndex != 0){
+		// 	Vector3 Player = PlayerTransform.position;
+		// 	float Last = 500;
+		// 	for(int i = 0;i<_bossBehavior._bulletIndex; i++){
+		// 		if (_bossBehavior._bulletPool[i].GetComponent<ctw_Bullet_Collider_Script>().OnWork == true){
+		// 			Vector3 Bullets = _bossBehavior._bulletPool[i].GetComponent<Transform>().position;
+		// 			if (Last > Math_2D_Range(Bullets,Player)){
+		// 			Last = Math_2D_Range(Bullets,Player);
+		// 			TargetBullet = _bossBehavior._bulletPool[i];
+		// 			}
+		// 		}
+		// 	}
+		// }
 		
 	}
 	

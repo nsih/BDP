@@ -12,6 +12,7 @@ namespace BS.Enemy{
             for(int i = 0; i < 100; i++){
                 var gameObj = Instantiate(_bulletPrefab);
                 Bullet bullet = gameObj.GetComponent<Bullet>();
+                bullet.transform.SetParent(this.transform);
                 bullet.Disable();
             }
         }
