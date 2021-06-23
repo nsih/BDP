@@ -118,7 +118,6 @@ namespace BS.Projectile{
 		}
 
 		private void OnTriggerEnter2D(Collider2D other){
-			Debug.Log(other.name);
 			if( ((1 << other.gameObject.layer) & _targetLayers) != 0 ){
 				other.GetComponent<PlayerController>().OnHit();
 				Disable();

@@ -341,13 +341,11 @@ namespace BS.Player{
 			switch (other.tag){
 				case "Bullet":
 					if (!_isInvincible){
-						ctw_Bullet_Collider_Script BulletScript = other.GetComponent<ctw_Bullet_Collider_Script>();
-						if ((!_isDead)&&(BulletScript.OnWork == true)) {
+						if (!_isDead) {
 							GenEffect(Get_Angle_byPosition(this.transform.position, other.GetComponent<Transform>().position)+35f, 15f, 1f, 3);
 							GenEffect(Get_Angle_byPosition(this.transform.position, other.GetComponent<Transform>().position)-35f, 15f, 1f, 3);
 							OnDamage();
 						}
-						BulletScript.Hitted();
 					}
 					break;
 			}

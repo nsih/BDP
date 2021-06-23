@@ -115,6 +115,15 @@ namespace BS.Enemy.Boss{
             #endregion
         }
 
+        private Bullet GenerateBullet(){
+            var gameObj = Instantiate(_bulletPrefab);
+            Bullet bullet = gameObj.GetComponent<Bullet>();
+            bullet.transform.SetParent(this.transform);
+            bullet.Disable();
+
+            return bullet;
+        }
+
         private void InitBullet(){
             for(int i = 0; i < 100; i++){
                 var gameObj = Instantiate(_bulletPrefab);
@@ -187,7 +196,9 @@ namespace BS.Enemy.Boss{
 		// 인자는 순서대로 발사속도, 목표좌표, 총알의 발사각도, 총알이 발사되기까지 기다리는 틱, 총알의 회전력
         void FireBullet(float speed, Vector3 dest, float rotationZ){
             Vector3 BossPos = this.transform.position;
-            Bullet bullet = ObjectPool.Instance.Dequeue();
+            Bullet bullet = ObjectPool.Instance.Dequeue() ?? GenerateBullet();
+
+            
             
             bullet.Init(this.transform.position, 10f);
             bullet.SetRotation(rotationZ);
@@ -199,7 +210,7 @@ namespace BS.Enemy.Boss{
 		// 총알의 위치를 특정 위치로 초기화하고 공격에 사용하는 데에 쓰이는 함수
 		// 인자는 순서대로 발사속도, 목표좌표, 총알의 발사각도, 총알이 발사되기까지 기다리는 틱, 총알의 회전력, 발사가 시작될 위치
         void TeleportBullet(float speed, Vector3 dest, float rotationZ, Vector3 TPlocation){
-            Bullet bullet = ObjectPool.Instance.Dequeue();
+            Bullet bullet = ObjectPool.Instance.Dequeue() ?? GenerateBullet();
 
             bullet.Init(TPlocation, 10f);
             bullet.SetRotation(rotationZ);

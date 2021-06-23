@@ -9,11 +9,6 @@
     }
     SubShader
     {
-        Tags
-        { 
-            "RenderType" = "Transparent" "Queue" = "Transparent" 
-        }
-
         Pass
         {
             Tags {"Queue" = "Transparent" "RenderType"="Transparent" }

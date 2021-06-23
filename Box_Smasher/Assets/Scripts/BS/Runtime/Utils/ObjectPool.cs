@@ -8,7 +8,7 @@ using UnityEngine;
 namespace BS.Utils{
     public class ObjectPool : BaseManager<ObjectPool>
     {
-        private Queue<Bullet> _pool = null;
+        private Queue<Bullet> _pool = new Queue<Bullet>();
         [ShowNonSerializedField]
         private int _count = 0;
 
@@ -33,10 +33,6 @@ namespace BS.Utils{
         #endregion
 
         public void Enqueue(Bullet obj){
-            if(_pool == null){
-                _pool = new Queue<Bullet>();
-            }
-
             _count++;
             _pool.Enqueue(obj);
         }

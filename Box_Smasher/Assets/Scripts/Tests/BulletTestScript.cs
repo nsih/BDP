@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using BS.Projectile;
 
-namespace Test{
+namespace Tests{
     public class BulletTestScript{
 
         [Test]
