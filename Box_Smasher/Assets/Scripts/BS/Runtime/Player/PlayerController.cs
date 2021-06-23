@@ -14,13 +14,15 @@ namespace BS.Player{
 
 		protected Rigidbody2D _rigid;
 		protected Collider2D _collider;
+
+		public GameObject _eraserPrefab;
 		public float _maxPower = 2000; /// 최대 차지 파워
 		[ProgressBar("Attack Power", 2000, EColor.Green)]
 		public float _currentPower = 0; /// 현재 차지 파워
 		
 		public Animator _bodyAnimator;
 		public Animator _faceAnimator;
-		public BulletEraser _eraser;
+		protected BulletEraser _eraser;
 		
 		public PhysicsMaterial2D _normal;
 		public PhysicsMaterial2D _bouncy;
@@ -30,8 +32,7 @@ namespace BS.Player{
 		public float _moveDirection;
 		public bool _down = false;
 		public int _onHit = 0;
-		[ProgressBar("Health", 3, EColor.Red)]
-		public int _health = 3;
+		public int _health = 100;
 		public bool _isInvincible = false;
 		public bool _isCharging = false;
 		public bool _isDead = false;
@@ -76,6 +77,7 @@ namespace BS.Player{
 			_physicManager.Init(this, _rigid);
 
 			_effector = FindObjectOfType<ctw_Effector_behavior>();
+			_eraser = BulletEraser.Create(_eraserPrefab, this.gameObject);
 			
 			if(_eraser == null){
 				Debug.LogError("eraser가 할당되어 있지 않습니다.");
@@ -158,6 +160,7 @@ namespace BS.Player{
 		}
 		#endregion
 
+		#region 충돌 처리
 		// Checks
 		void OnDamage(){
 			if (_health > 1){
@@ -185,7 +188,14 @@ namespace BS.Player{
 			Vector3 pos = this.transform.position;
 			_effector?.Effect_Run(time, pos, Get_Force_byAngle(angle)*F, num);
 		}
+
+		public virtual void OnHit(){
+			Debug.Log("Player 맞음");
+			OnDamage();
+		}
 		
+		#endregion
+
 		// Inputs
 		
 		void InputMove(){
@@ -255,7 +265,7 @@ namespace BS.Player{
 				_currentPower += amount * direction;
 			}
 
-			if ((Input.GetMouseButtonUp(0))&&(_onHit == 1)){
+			if ((Input.GetMouseButtonUp(0)) && (_onHit == 1)){
 				if (Mathf.Abs(_currentPower) >= _maxPower){
 					_currentPower = (_currentPower > 0 ? 1 : -1) * _maxPower;
 				}
@@ -299,6 +309,10 @@ namespace BS.Player{
 		}
 		
 		public void ProcessEffect(Collider2D other){
+			// 땅체크는 Layer로 하고 _isCharging 중단 체크는 tag로 하기 때문에
+			// 땅의 tag가 정해져 있지 않으면 문제가 생기는 경우가 있음
+			// Physics Controller로 옮겨야 하나
+			// 어떻게 해야할지 고민 중에 있음
 			switch (other.tag){
 				case "Platform":
 					ctw_Platform_behavior PlatformScript = other.GetComponent<ctw_Platform_behavior>();
@@ -327,13 +341,11 @@ namespace BS.Player{
 			switch (other.tag){
 				case "Bullet":
 					if (!_isInvincible){
-						ctw_Bullet_Collider_Script BulletScript = other.GetComponent<ctw_Bullet_Collider_Script>();
-						if ((!_isDead)&&(BulletScript.OnWork == true)) {
+						if (!_isDead) {
 							GenEffect(Get_Angle_byPosition(this.transform.position, other.GetComponent<Transform>().position)+35f, 15f, 1f, 3);
 							GenEffect(Get_Angle_byPosition(this.transform.position, other.GetComponent<Transform>().position)-35f, 15f, 1f, 3);
 							OnDamage();
 						}
-						BulletScript.Hitted();
 					}
 					break;
 			}

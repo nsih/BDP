@@ -12,9 +12,7 @@ namespace BS.Player{
     public class PlayerPhysicController : MonoBehaviour
     {
         [SerializeField]
-        private LayerMask _groundLayers;
-        [SerializeField]
-        private LayerMask _bulletLayers;
+        private LayerMask _groundLayers = 0;
         private Transform _groundChecker;
         public float _groundRadius = .2f; // ground를 체크하는 콜라이더의 지름
         
