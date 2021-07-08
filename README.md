@@ -62,10 +62,12 @@ Unity 2019.4.2f1
 1. npm run commit
 1. 커밋 메시지 작성 후 push
 
+# github action error reason
+1. commit 메시지 불량
+1. 유효하지 않은 secret
+
 # 목표 사양
-
 화면 크기 : 1920x1080 (16:9)
-
 
 # 참가자
 HookSSi
