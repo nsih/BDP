@@ -56,8 +56,8 @@ jobs:
           npm run prepare
 
       # execute commitlint
-      #- name: Validate all commits from PR
-      #  run: npx commitlint --from HEAD~${{ github.event.pull_request.commits }} --to HEAD --verbose
+      - name: Validate all commits from PR
+        run: npx commitlint --from HEAD~${{ github.event.pull_request.commits }} --to HEAD --verbose
 
 
       # Test
