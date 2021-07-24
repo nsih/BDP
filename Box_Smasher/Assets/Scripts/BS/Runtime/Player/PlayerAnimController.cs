@@ -1,10 +1,11 @@
 ﻿using System.Collections;
+using BS.Anim;
 using BS.Manager.Cameras;
 using UnityEngine;
 
 namespace BS.Player
 {
-    public class PlayerAnimController : MonoBehaviour
+    public class PlayerAnimController : BaseAnimController
     {
         // 임시로 public으로 지정
         // Init 함수로 초기화 하는 게 좋을 지도 모름
@@ -18,8 +19,12 @@ namespace BS.Player
         protected SpriteRenderer _bodySprite;
         protected SpriteRenderer _faceSprite;
 
-        bool isBlink = false;
         int prevLeftRightDirection = 1;
+
+        /// <summary>
+        /// Base AnimController 초기화
+        /// </summary>
+        public override void Init(){}
 
         /// <summary>
         /// 플레이어 Animation Controller 초기화
@@ -44,40 +49,8 @@ namespace BS.Player
         /// <param name="t"> blink 지속 시간</param>
         /// <param name="freq"> alpha가 1이 되는 blink 주기</param>
         public void SpriteAlphaBlink(float t, float freq){
-            StartCoroutine(SpriteAlphaBlinkLoop(t, freq));
-        }
-
-        protected IEnumerator SpriteAlphaBlinkLoop(float t, float freq){
-            float duration = t;
-            isBlink = true;
-            while(duration > 0){
-                float x = (t - duration);
-                float alpha = Mathf.Abs(Mathf.Cos((Mathf.PI / freq) * x));
-                SetSpriteAlpha(alpha);
-
-                duration -= Time.deltaTime;
-                yield return null;
-            }
-        
-            isBlink = false;
-            SetSpriteAlpha(1f);
-            yield return null;
-        }
-
-        
-        /// <summary>
-        /// 플레이어의 sprite alpha를 set합니다.
-        /// </summary>
-        /// <param name="alpha"> set할 alpha값 </param>
-        protected void SetSpriteAlpha(float alpha){
-            _bodySprite.color = new Color(  _bodySprite.color.r,
-                                            _bodySprite.color.g,
-                                            _bodySprite.color.b,
-                                            alpha);
-            _faceSprite.color = new Color(  _faceSprite.color.r,
-                                            _faceSprite.color.g,
-                                            _faceSprite.color.b,
-                                            alpha);
+            StartCoroutine(SpriteAlphaBlinkLoop(_bodySprite, t, freq));
+            StartCoroutine(SpriteAlphaBlinkLoop(_faceSprite, t, freq));
         }
 
         /// <summary>
@@ -87,15 +60,17 @@ namespace BS.Player
         /// </summary>
         protected void ChargingAnim(){
 
-            if(_player.IsCharging){
+            if(_player._isCharging){
                 float progress = (Mathf.Abs(_player._currentPower) / _player._maxPower) * 0.75f;
 
                 if(progress > 0.75f){
                     progress = 1f;
                 }
-        
+
+                _bodyAnimator.SetFloat("Charging", progress);
                 _faceAnimator.SetFloat("Charging", progress);
             }else{
+                _bodyAnimator.SetFloat("Charging", 0);
                 _faceAnimator.SetFloat("Charging", 0);
             }
         }
@@ -111,11 +86,11 @@ namespace BS.Player
         /// Player가 공격을 받아 무적 상태에 진입
         /// </summary>
         public void OnHit(){
-            if(_player.Invincible && !isBlink){
+            if(_player._isInvincible && !isBlink){
                 SpriteAlphaBlink(0.9f, 0.03f);
 
                 _bodyAnimator.SetTrigger("OnHit");
-                if(!_player.IsCharging){
+                if(!_player._isCharging){
                     _faceAnimator.SetTrigger("OnHit");
                 }
             }
@@ -125,9 +100,20 @@ namespace BS.Player
         /// Player 사망시 애니메이션 재생
         /// </summary>
         public void Dead(){
-            if(_player.Dead){
-                SetSpriteAlpha(0.35f);
+            if(_player._isDead){
+                SetSpriteAlpha(_bodySprite, 0.35f);
+                SetSpriteAlpha(_faceSprite, 0.35f);
             }
+        }
+
+        public void Off(){
+            _bodyAnimator.SetTrigger("BlackNoise");
+            _faceSprite.gameObject.SetActive(false);
+        }
+
+        public void On(){
+            _bodyAnimator.SetTrigger("Idle");
+            _faceSprite.gameObject.SetActive(true);
         }
         
         /// <summary>
@@ -140,7 +126,7 @@ namespace BS.Player
 
             int directionUpDown = 1;
             // Player가 Charging 중...
-            if(_player.IsCharging){
+            if(_player._isCharging){
                 if((90 < rotationZ) && (rotationZ < 270)){
                     directionUpDown = -1;
                 }
@@ -152,7 +138,7 @@ namespace BS.Player
 
             int directionLeftRight = prevLeftRightDirection;
             // Player가 Charging 중...
-            if(_player.IsCharging){
+            if(_player._isCharging){
                 Vector2 pos = this.transform.position;
 				Vector2 mouseOnWorld = CameraManager.Instance.MainCamera.ScreenToWorldPoint(Input.mousePosition);
 
@@ -170,30 +156,13 @@ namespace BS.Player
             _bodySprite.transform.localScale = scale;
         }
 
-        public void Render(){            
+        public override void Render(){            
             ChargingAnim();
             
             // Player가 Charging 중이 아니면 Falling Animation
-            _faceAnimator.SetBool("Falling", _player.IsFalling && !_player.IsCharging && !_player.AttackSuccess);
+            _faceAnimator.SetBool("Falling", _player.IsFalling() && !_player._isCharging && !_player._attackSuccess);
             
             FlipSprite();
-        }
-
-        /// <summary>
-        /// 디버깅 용
-        /// 아직 제대로 만들지 않음
-        /// </summary>
-        private void OnDrawGizmos()
-        {
-            float distance = 1f;
-            // Left
-            Gizmos.color = Color.yellow;
-            Vector3 dst = (_bodySprite.transform.position - new Vector3(distance * _bodySprite.transform.localScale.x, 0, 0));
-            Gizmos.DrawLine(_bodySprite.transform.position, dst);
-            // Up
-            Gizmos.color = Color.blue;
-            dst = (_bodySprite.transform.position - new Vector3(0, distance * _bodySprite.transform.localEulerAngles.y, 0));
-            Gizmos.DrawLine(_bodySprite.transform.position, dst);
         }
     }
 }
